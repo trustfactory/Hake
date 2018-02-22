@@ -6,7 +6,7 @@
 
 local EconPanel = {}
 
-EconPanel.optionEnable = Menu.AddOption({ "Awareness", "Econ Panel" }, "Enable Econ Panel", "show hero ranking of total item price")
+EconPanel.optionEnable = Menu.AddOption({ "Awareness", "Econ Panel" }, "Enable Econ Panel", "Shows Hero Ranking of Total Item Worth")
 EconPanel.key = Menu.AddKeyOption({ "Awareness", "Econ Panel" }, "Turn On/Off Key", Enum.ButtonCode.KEY_L)
 EconPanel.font = Renderer.LoadFont("Tahoma", 16, Enum.FontWeight.EXTRABOLD)
 EconPanel.isOpen = true
@@ -275,10 +275,10 @@ function EconPanel.OnDraw()
 		maxGold = econValue >= maxGold and econValue or maxGold
 
 		if isSameTeamTable[heroName] then
-			Renderer.SetDrawColor(0, 255, 0, 125)
+			Renderer.SetDrawColor(50, 205, 50, 200)
 			myTeamEcon = myTeamEcon + econValue
 		else
-			Renderer.SetDrawColor(255, 0, 0, 125)
+			Renderer.SetDrawColor(178, 34, 34, 200)
 			enemyTeamEcon = enemyTeamEcon + econValue
 		end
 
@@ -289,7 +289,7 @@ function EconPanel.OnDraw()
 		
 		-- draw text
 		local drawText = econValue -- .." - "..heroName
-		Renderer.SetDrawColor(255, 255, 255, 255)
+		Renderer.SetDrawColor(255, 215, 0, 255)
 		Renderer.DrawText(EconPanel.font, drawX+heroIconWidth+wordGap, drawY, drawText, 1)
 
 		-- draw hero icon
@@ -308,12 +308,12 @@ function EconPanel.OnDraw()
 
 	local econDiff = myTeamEcon - enemyTeamEcon
 	if econDiff > 0 then
-		Renderer.SetDrawColor(0, 255, 0, 255)
+		Renderer.SetDrawColor(50, 205, 50, 255)
 	else
-		Renderer.SetDrawColor(255, 0, 0, 255)
+		Renderer.SetDrawColor(178, 34, 34, 255)
 	end
 	drawY = drawY - #econTable * lineGap
-	Renderer.DrawText(EconPanel.font, drawX+wordGap, drawY, "Economic Difference: "..econDiff, 1)
+	Renderer.DrawText(EconPanel.font, drawX+wordGap, drawY, "Economic Worth: "..econDiff, 1)
 
 	-- reallocate
 	econTable = {}
