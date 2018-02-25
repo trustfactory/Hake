@@ -22,40 +22,40 @@ end
 
 function Oracle.AutoSave(myHero)
     local promise = NPC.GetAbility(myHero, "oracle_false_promise")
-    if not promise or not Ability.IsCastable(promise, NPC.GetMana(myHero)) then return end
+    local mana = NPC.GetMana(myHero)
+    local teamMatesAround = NPC.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_FRIEND)
+    if next(teamMatesAround) ~= nil then
+    for _, ally in ipairs(teamMatesAround) do
+    if ally and Entity.IsHero(ally) and not NPC.IsIllusion(ally) and Entity.GetHealth(ally) <= Entity.GetMaxHealth(ally) * 0.3 and Ability.IsReady(promise) and Ability.IsCastable(promise, math.floor(mana)) then
+    Ability.CastTarget(promise, ally)
+    return end
+    
+    local myHealth = Entity.GetHealth(myHero)
 
-    if Utility.NeedToBeSaved(myHero) and Utility.CanCastSpellOn(myHero) then
-        Ability.CastTarget(promise, myHero)
-        return
-    end
-
-    local range = Ability.GetCastRange(promise)
-    local allies = NPC.GetHeroesInRadius(myHero, range, Enum.TeamType.TEAM_FRIEND)
-    for i, ally in ipairs(allies) do
-	    if Utility.NeedToBeSaved(ally) and Utility.CanCastSpellOn(ally) then
-	        Ability.CastTarget(promise, ally)
-	        return
-	    end
-    end
+    if myHealth <= Entity.GetMaxHealth(myHero) * 0.3 and Ability.IsReady(promise) and Ability.IsCastable(promise, math.floor(mana)) then
+    Ability.CastTarget(promise, myHero)
+    return end
+	end
+end
 end
 
 function Oracle.AutoHeal(myHero)
-local flames = NPC.GetAbility(myHero, "oracle_purifying_flames")
-    if not flames or not Ability.IsCastable(flames, NPC.GetMana(myHero)) then return end
+	local flames = NPC.GetAbility(myHero, "oracle_purifying_flames")
+    local mana = NPC.GetMana(myHero)
+    local teamMatesAround = NPC.GetHeroesInRadius(myHero, 850, Enum.TeamType.TEAM_FRIEND)
+    if next(teamMatesAround) ~= nil then
+    for _, ally in ipairs(teamMatesAround) do
+    if ally and Entity.IsHero(ally) and not NPC.IsIllusion(ally) and Entity.GetHealth(ally) <= Entity.GetMaxHealth(ally) * 0.3 and Ability.IsReady(flames) and Ability.IsCastable(flames, math.floor(mana)) then
+    Ability.CastTarget(flames, ally)
+    return end
     
-	if Utility.NeedToBeSaved(myHero) and Utility.CanCastSpellOn(myHero) then
-	    Ability.CastTarget(flames, myHero)
-	    return
-	end
-	    
-    local range = Ability.GetCastRange(flames)
-    local allies = NPC.GetHeroesInRadius(myHero, range, Enum.TeamType.TEAM_FRIEND)
-    for i, ally in ipairs(allies) do
-	    if Utility.NeedToBeSaved(ally) and Utility.CanCastSpellOn(ally) then
-		    Ability.CastTarget(flames, ally)
-			return
-		end 
-	end
-end   
+    local myHealth = Entity.GetHealth(myHero)
+
+    if myHealth <= Entity.GetMaxHealth(myHero) * 0.3 and Ability.IsReady(flames) and Ability.IsCastable(flames, math.floor(mana)) then
+    Ability.CastTarget(flames, myHero)
+    return end
+end  
+end
+end
 
 return Oracle
