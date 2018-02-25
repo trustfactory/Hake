@@ -145,7 +145,7 @@ function Utility.NeedToBeSaved(npc)
 	if NPC.HasState(npc, Enum.ModifierState.MODIFIER_STATE_PASSIVES_DISABLED) then return true end
 	if NPC.HasState(npc, Enum.ModifierState.MODIFIER_STATE_BLIND) then return true end
 
-	if Entity.GetHealth(npc) <= 0.2 * Entity.GetMaxHealth(npc) then return true end
+	if Entity.GetHealth(npc) <= 0.3 * Entity.GetMaxHealth(npc) then return true end
 
 	return false
 end
