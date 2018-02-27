@@ -23,7 +23,8 @@ end
 function Oracle.AutoSave(myHero)
     local promise = NPC.GetAbility(myHero, "oracle_false_promise")
     local mana = NPC.GetMana(myHero)
-    local teamMatesAround = NPC.GetHeroesInRadius(myHero, 1000, Enum.TeamType.TEAM_FRIEND)
+    local range = Ability.GetCastRange(promise)
+    local teamMatesAround = NPC.GetHeroesInRadius(myHero, range, Enum.TeamType.TEAM_FRIEND)
     if next(teamMatesAround) ~= nil then
     for _, ally in ipairs(teamMatesAround) do
     if ally and Entity.IsHero(ally) and not NPC.IsIllusion(ally) and Entity.GetHealth(ally) <= Entity.GetMaxHealth(ally) * 0.3 and Ability.IsReady(promise) and Ability.IsCastable(promise, math.floor(mana)) then
@@ -40,9 +41,10 @@ end
 end
 
 function Oracle.AutoHeal(myHero)
-	local flames = NPC.GetAbility(myHero, "oracle_purifying_flames")
+    local flames = NPC.GetAbility(myHero, "oracle_purifying_flames")
     local mana = NPC.GetMana(myHero)
-    local teamMatesAround = NPC.GetHeroesInRadius(myHero, 850, Enum.TeamType.TEAM_FRIEND)
+    local range = Ability.GetCastRange(flames)
+    local teamMatesAround = NPC.GetHeroesInRadius(myHero, range, Enum.TeamType.TEAM_FRIEND)
     if next(teamMatesAround) ~= nil then
     for _, ally in ipairs(teamMatesAround) do
     if ally and Entity.IsHero(ally) and not NPC.IsIllusion(ally) and Entity.GetHealth(ally) <= Entity.GetMaxHealth(ally) * 0.3 and Ability.IsReady(flames) and Ability.IsCastable(flames, math.floor(mana)) then
