@@ -39,11 +39,9 @@ end
 function Oracle.AutoSave(myHero)
     local promise = NPC.GetAbility(myHero, "oracle_false_promise")
     local mana = NPC.GetMana(myHero)
-    local range = Ability.GetCastRange(promise)
-    local teamMatesAround = NPC.GetHeroesInRadius(myHero, range, Enum.TeamType.TEAM_FRIEND)
-    if next(teamMatesAround) ~= nil then
-    for _, ally in ipairs(teamMatesAround) do
-    if ally and Entity.IsHero(ally) and not NPC.IsIllusion(ally) and Entity.GetHealth(ally) <= Entity.GetMaxHealth(ally) * 0.3 and Ability.IsReady(promise) and Ability.IsCastable(promise, math.floor(mana)) then
+    for i = 1, Heroes.Count() do
+    local ally = Heroes.Get(i)
+    if ally and not NPC.IsIllusion(ally) and Entity.IsSameTeam(myHero, ally) and Utility.CanCastSpellOn(ally) and Entity.GetHealth(ally) <= Entity.GetMaxHealth(ally) * 0.3 and Ability.IsReady(promise) and Ability.IsCastable(promise, math.floor(mana)) then
     Ability.CastTarget(promise, ally)
     return end
     
@@ -52,18 +50,15 @@ function Oracle.AutoSave(myHero)
     if myHealth <= Entity.GetMaxHealth(myHero) * 0.3 and Ability.IsReady(promise) and Ability.IsCastable(promise, math.floor(mana)) then
     Ability.CastTarget(promise, myHero)
     return end
-	end
-end
+    end
 end
 
 function Oracle.AutoHeal(myHero)
     local flames = NPC.GetAbility(myHero, "oracle_purifying_flames")
     local mana = NPC.GetMana(myHero)
-    local range = Ability.GetCastRange(flames)
-    local teamMatesAround = NPC.GetHeroesInRadius(myHero, range, Enum.TeamType.TEAM_FRIEND)
-    if next(teamMatesAround) ~= nil then
-    for _, ally in ipairs(teamMatesAround) do
-    if ally and Entity.IsHero(ally) and not NPC.IsIllusion(ally) and Entity.GetHealth(ally) <= Entity.GetMaxHealth(ally) * 0.3 and Ability.IsReady(flames) and Ability.IsCastable(flames, math.floor(mana)) then
+    for i = 1, Heroes.Count() do
+    local ally = Heroes.Get(i)
+    if ally and not NPC.IsIllusion(ally) and Entity.IsSameTeam(myHero, ally) and Utility.CanCastSpellOn(ally) and Entity.GetHealth(ally) <= Entity.GetMaxHealth(ally) * 0.3 and Ability.IsReady(flames) and Ability.IsCastable(flames, math.floor(mana)) then
     Ability.CastTarget(flames, ally)
     return end
     
@@ -72,8 +67,7 @@ function Oracle.AutoHeal(myHero)
     if myHealth <= Entity.GetMaxHealth(myHero) * 0.3 and Ability.IsReady(flames) and Ability.IsCastable(flames, math.floor(mana)) then
     Ability.CastTarget(flames, myHero)
     return end
-end  
-end
+    end  
 end
 
 return Oracle
