@@ -33,7 +33,6 @@ function Spectre.AutoHaunt(myHero)
 	local mana = NPC.GetMana(myHero)
 	for i = 1, Heroes.Count() do
 	local hero = Heroes.Get(i)
-	local heroPos = Entity.GetAbsOrigin(hero)
 	
     if hero and Entity.IsHero(hero) and not NPC.IsIllusion(hero) and Entity.GetHealth(hero) <= Entity.GetMaxHealth(hero) * 0.15 and Ability.IsReady(haunt) and Ability.IsCastable(haunt, math.floor(mana)) then Ability.CastNoTarget(haunt) return end
     end
