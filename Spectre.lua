@@ -2,7 +2,7 @@ local Spectre = {}
 
 local optionAutoHaunt = Menu.AddOption({"Hero Specific", "Spectre"}, "Auto Haunt", "Auto cast 'Haunt' to KS low enemy")
 local key = Menu.AddKeyOption({"Hero Specific", "Spectre"}, "Activate Auto Spells Key", Enum.ButtonCode.KEY_S)
-local font = Renderer.LoadFont("Tahoma", 25, Enum.FontWeight.EXTRABOLD)
+local font = Renderer.LoadFont("Tahoma", 15, Enum.FontWeight.EXTRABOLD)
 local inAutoSpellsMode = false
 
 function Spectre.OnUpdate()
@@ -33,8 +33,7 @@ function Spectre.AutoHaunt(myHero)
 	local mana = NPC.GetMana(myHero)
 	for i = 1, Heroes.Count() do
 	local hero = Heroes.Get(i)
-	
-    if hero and Entity.IsHero(hero) and not NPC.IsIllusion(hero) and Entity.GetHealth(hero) <= Entity.GetMaxHealth(hero) * 0.15 and Ability.IsReady(haunt) and Ability.IsCastable(haunt, math.floor(mana)) then Ability.CastNoTarget(haunt) return end
+	if hero ~= nil and Entity.IsHero(hero) and not Entity.IsSameTeam(myHero, hero) and not NPC.IsIllusion(hero) and Entity.GetHealth(hero) <= Entity.GetMaxHealth(hero) * 0.15 and Ability.IsReady(haunt) and Ability.IsCastable(haunt, math.floor(mana)) then Ability.CastNoTarget(haunt) return end
     end
 end
 
