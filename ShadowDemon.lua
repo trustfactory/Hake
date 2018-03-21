@@ -49,7 +49,7 @@ function Shadow.OnUpdate()
                     local totalStacksDamage = 0
                     local stacksToMultiply = stacks
                     local multDamage = 1
-                    if stacks > 5 then 
+                    if stacks > 5 then
                         stacksToMultiply = 5
                     end
                     stacks = stacks - stacksToMultiply
@@ -61,21 +61,31 @@ function Shadow.OnUpdate()
 
                     local multStackDamage = 0
                     if stacksToMultiply then
-                        multStackDamage = (1 - NPC.GetMagicalArmorValue(npc)) * ((stacksDamage * multDamage) * (1 + spellAmp / 100))
+                        multStackDamage = (stacksDamage * multDamage) * (1 + spellAmp / 100)
                     end
 
                     local bonusStackDamage = 0
                     if stacks > 0 then
-                        bonusStackDamage = (1 - NPC.GetMagicalArmorValue(npc)) * ((bonusDamage * stacks) * (1 + spellAmp / 100))
+                        bonusStackDamage = (bonusDamage * stacks) * (1 + spellAmp / 100)
                     end
 
                     totalStacksDamage = multStackDamage + bonusStackDamage
-                    Log.Write("multDamage: " .. tostring(multDamage))
-                    Log.Write("multStackDamage: " .. tostring(multStackDamage))
-                    Log.Write("bonusStackDamage: " .. tostring(bonusStackDamage))
-                    Log.Write("totalstacksDamage: " .. tostring(totalStacksDamage))
-                    if totalStacksDamage > Entity.GetHealth(npc) then
-                        Log.Write("tried to kill")
+                    local extraDamage = totalStacksDamage
+                    local ampPercent = 0
+                    if NPC.HasModifier(npc, "modifier_shadow_demon_soul_catcher") then
+                        local catcherMod = NPC.GetModifier(npc, "modifier_shadow_demon_soul_catcher")
+                        local catcherLevel = Ability.GetLevel(NPC.GetAbility(myHero, "shadow_demon_soul_catcher"))
+                        if catcherLevel > 0 then
+                            ampPercent = (10 + catcherLevel * 10) -- * (1 + spellAmp / 100) DOTA BUG doesnt amp so sad
+                        end
+                        extraDamage = totalStacksDamage * (1 + ampPercent / 100)
+                    end
+                    totalDamage = (1 - NPC.GetMagicalArmorValue(npc)) * (extraDamage)
+                    Log.Write("totalStacksDamage: " .. tostring(totalStacksDamage))
+                    Log.Write("extraDamage: " .. tostring(extraDamage))
+                    Log.Write("ampPercent: " .. tostring(ampPercent))
+                    Log.Write("totalDamage: " .. tostring(totalDamage))
+                    if totalDamage > Entity.GetHealth(npc) then
                         local release = NPC.GetAbility(myHero, "shadow_demon_shadow_poison_release")
                         Ability.CastNoTarget(release)
                     end
@@ -90,30 +100,30 @@ function Shadow.OnUpdate()
     if not Shadow.PoisonCastPos then Shadow.PoisonCastPos = nil end
     if not Shadow.PoisonCastEnemy then Shadow.PoisonCastEnemy = nil end
     if GameRules.GetGameTime() - Shadow.PoisonStartCastTime < 0.25 and Shadow.PoisonCastPos and Shadow.PoisonCastEnemy then
-        if NPC.IsVisible(Shadow.PoisonCastEnemy) then
+        if Shadow.PoisonCastEnemy ~= nil and NPC.IsVisible(Shadow.PoisonCastEnemy) then
             local speed = 1000
             local dis = (Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(Shadow.PoisonCastEnemy)):Length()
             local delay = dis / speed
 
-            -- check rotation diff
-            if NPC.GetTimeToFacePosition(myHero, Shadow.PoisonCastPos) < 0.03 then
-                local targetAngle = Entity.GetAbsRotation(Shadow.PoisonCastEnemy)
-                local myAngle = Entity.GetAbsRotation(myHero)
-                local diff = math.abs(targetAngle:GetYaw() - myAngle:GetYaw())
-                if NPC.IsRunning(Shadow.PoisonCastEnemy) then
-                if (dis > 1500 and not (diff < 33 or (diff > 180 - 33 and diff < 180 + 33))) or
-                (dis > 1000 and dis < 1500 and not (diff < 44 or (diff > 180 - 44 and diff < 180 + 44))) or
-                (dis > 750 and dis < 1000 and not (diff < 66 or (diff > 180 - 66 and diff < 180 + 66))) or
-                (dis > 500 and dis < 750 and not (diff < 77 or (diff > 180 - 77 and diff < 180 + 77))) or
-                (dis > 250 and dis < 500 and not (diff < 85 or (diff > 180 - 85 and diff < 180 + 85))) then
-                    Player.HoldPosition(Players.GetLocal(), myHero, false)
-                    Shadow.PoisonStartCastTime = 0
-                    Shadow.PoisonCastPos = nil
-                    Shadow.PoisonCastEnemy = nil
-                    return
-                end
-                end
-            end
+            -- -- check rotation diff
+            -- if NPC.GetTimeToFacePosition(myHero, Shadow.PoisonCastPos) < 0.03 then
+            --     local targetAngle = Entity.GetAbsRotation(Shadow.PoisonCastEnemy)
+            --     local myAngle = Entity.GetAbsRotation(myHero)
+            --     local diff = math.abs(targetAngle:GetYaw() - myAngle:GetYaw())
+            --     if NPC.IsRunning(Shadow.PoisonCastEnemy) then
+            --     if (dis > 1500 and not (diff < 33 or (diff > 180 - 44 and diff < 180 + 44))) or
+            --     (dis > 1000 and dis < 1500 and not (diff < 55 or (diff > 180 - 55 and diff < 180 + 55))) or
+            --     (dis > 750 and dis < 1000 and not (diff < 66 or (diff > 180 - 66 and diff < 180 + 66))) or
+            --     (dis > 500 and dis < 750 and not (diff < 77 or (diff > 180 - 77 and diff < 180 + 77))) or
+            --     (dis > 250 and dis < 500 and not (diff < 85 or (diff > 180 - 85 and diff < 180 + 85))) then
+            --         Player.HoldPosition(Players.GetLocal(), myHero, false)
+            --         Shadow.PoisonStartCastTime = 0
+            --         Shadow.PoisonCastPos = nil
+            --         Shadow.PoisonCastEnemy = nil
+            --         return
+            --     end
+            --     end
+            -- end
 
 
             if (Utility.GetPredictedPosition(Shadow.PoisonCastEnemy, delay)-Shadow.PoisonCastPos):Length2D() > 180 then
