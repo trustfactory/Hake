@@ -214,7 +214,57 @@ if not Menu.IsKeyDown(Shadow.comboKey) then return end
         
         if Disruption and Ability.IsCastable(Disruption, mana) and not NPC.IsIllusion(hero) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Disruption),0) then Ability.CastTarget(Disruption, hero) return end
         
-        if Catcher and Ability.IsCastable(Catcher, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Catcher),0) then Ability.CastPosition(Catcher, heroPos) return end
+        -- algorithm for soul catcher
+        if Catcher and Ability.IsCastable(Catcher, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Catcher)+Ability.GetCastRange(Catcher)*0.5,0) then
+                  
+        -- get enemy origin
+        -- get myHero origin
+        -- get points at increments in a circle around enemy origin
+        -- if the point is within soul catcher aoe for the enemy and the point is within soul catcher cast range for myHero then
+        -- calculate how many enemies would be in the aoe
+        -- if 1, then cast
+        -- continue for all points around the circle
+        -- increase the circle radius and repeat
+
+        if not Shadow.CatcherTime then
+            Shadow.CatcherTime = 0
+        end
+
+        local myHeroPos = Entity.GetAbsOrigin(myHero)
+        local angle = Entity.GetRotation(myHero)
+        for range = 50, 600, 50 do
+            for step = 0, 360, 5 do
+                local angleOffset = Angle(0, step, 0)
+                angle:SetYaw(angle:GetYaw() + angleOffset:GetYaw())
+                local x, y, z = angle:GetVectors()
+                local direction = x + y + z
+                direction:SetZ(0)
+                direction:Normalize()
+                direction:Scale(range)
+                local newPos = myHeroPos+direction
+                Log.Write(tostring((newPos-myHeroPos):Length2D()))
+                if NPC.IsPositionInRange(myHero, newPos, 600, 0) then
+                    local unitsAround = 0
+                    for i = 1, NPCs.Count() do
+                        local npc = NPCs.Get(i)
+                        if npc and Entity.GetHealth(npc) > 0 and not Entity.IsSameTeam(myHero, npc) and NPC.IsPositionInRange(npc, newPos, 460, 0) then
+                            unitsAround = unitsAround + 1
+                        end
+                    end
+                    if unitsAround and unitsAround > 0 then
+                        if unitsAround < 2 and NPC.IsPositionInRange(hero, newPos, 400, 0) then
+                            Ability.CastPosition(Catcher, newPos)
+                            return
+                        end
+                    end
+                end
+            end
+        end
+
+        Ability.CastPosition(Catcher, heroPos)
+
+        return end
+         -- end algorithm for soul catcher
         
         if Poison and Ability.IsCastable(Poison, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Poison),0) then Ability.CastPosition(Poison, heroPos) return end
         
