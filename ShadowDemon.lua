@@ -7,8 +7,17 @@ Shadow.comboKey = Menu.AddKeyOption({"Hero Specific","Shadow Demon"},"2. Combo K
 Shadow.optionEnable = Menu.AddOption({"Hero Specific","Shadow Demon"},"1. Enabled","Enable/Disable Shadow Demon Combo")
 Shadow.optionSDBlink = Menu.AddOption({ "Hero Specific", "Shadow Demon" }, "4. Use Blink to Initiate {{Shadow Demon}}", "")
 Shadow.optionSDBlinkRange = Menu.AddOption({ "Hero Specific", "Shadow Demon" }, "5. Set Safe Blink Initiation Range {{Shadow Demon}}", "If over 575, then Euls will not activate in combo", 200, 800, 25)
-Shadow.EulsEnable = Menu.AddOption({"Hero Specific", "Shadow Demon"}, "6. Turn On/Off Euls in Combo", "")
-Shadow.UltEnable = Menu.AddOption({"Hero Specific", "Shadow Demon"}, "7. Turn On/Off Ult in Combo", "")
+--Skills Toggle Menu--
+Shadow.optionEnableDisruption = Menu.AddOption({ "Hero Specific","Shadow Demon","6. Skills"},"1. Use Disruption","Enable Or Disable")
+Shadow.optionEnableCatcher = Menu.AddOption({ "Hero Specific","Shadow Demon","6. Skills"},"2. Use Catcher","Enable Or Disable")
+Shadow.optionEnablePoison = Menu.AddOption({ "Hero Specific","Shadow Demon","6. Skills"},"3. Use Poison","Enable Or Disable")
+Shadow.optionEnableUlt = Menu.AddOption({ "Hero Specific","Shadow Demon","6. Skills"},"4. Use Ult","Enable Or Disable")
+--Items Toggle Menu--
+Shadow.optionEnableGlimmer = Menu.AddOption({ "Hero Specific","Shadow Demon","7. Items"},"1. Use Glimmer Cape","Turn On/Off Glimmer Cape in Combo")
+Shadow.optionEnableEuls = Menu.AddOption({ "Hero Specific","Shadow Demon","7. Items"},"2. Use Euls","Turn On/Off Euls in Combo")
+
+
+
 
 function Shadow.OnUpdate()
     local myHero = Heroes.GetLocal()
@@ -200,6 +209,7 @@ if not Menu.IsKeyDown(Shadow.comboKey) then return end
     local Atos = NPC.GetItem(myHero, "item_rod_of_atos", true)
     local Veil  = NPC.GetItem(myHero, "item_veil_of_discord", true)
     local Euls = NPC.GetItem(myHero, "item_cyclone", true)
+    local Glimmer = NPC.GetItem(myHero, "item_glimmer_cape", true)
 	
 	if Menu.IsEnabled(Shadow.optionEnable) then
     
@@ -212,10 +222,10 @@ if not Menu.IsKeyDown(Shadow.comboKey) then return end
         
         if Veil and Ability.IsCastable(Veil, mana) and not NPC.IsIllusion(hero) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Veil),0) and heroPos then Ability.CastPosition(Veil, heroPos) return end
         
-        if Disruption and Ability.IsCastable(Disruption, mana) and not NPC.IsIllusion(hero) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Disruption),0) then Ability.CastTarget(Disruption, hero) return end
+        if Disruption and Menu.IsEnabled(Shadow.optionEnableDisruption) and Ability.IsCastable(Disruption, mana) and not NPC.IsIllusion(hero) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Disruption),0) then Ability.CastTarget(Disruption, hero) return end
         
         -- algorithm for soul catcher
-        if Catcher and Ability.IsCastable(Catcher, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Catcher)+Ability.GetCastRange(Catcher)*0.5,0) then
+        if Catcher and Menu.IsEnabled(Shadow.optionEnableCatcher) and Ability.IsCastable(Catcher, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Catcher)+Ability.GetCastRange(Catcher)*0.5,0) then
                   
         -- get enemy origin
         -- get myHero origin
@@ -266,11 +276,13 @@ if not Menu.IsKeyDown(Shadow.comboKey) then return end
         return end
          -- end algorithm for soul catcher
         
-        if Poison and Ability.IsCastable(Poison, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Poison),0) then Ability.CastPosition(Poison, heroPos) return end
+        if Poison and Menu.IsEnabled(Shadow.optionEnablePoison) and Ability.IsCastable(Poison, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Poison),0) then Ability.CastPosition(Poison, heroPos) return end
         
-        if Euls and Menu.IsEnabled(Shadow.EulsEnable) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Euls),0) then Ability.CastTarget(Euls, hero) return end
+        if Euls and Menu.IsEnabled(Shadow.optionEnableEuls) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Euls),0) then Ability.CastTarget(Euls, hero) return end
 
-        if Ult and Menu.IsEnabled(Shadow.UltEnable) and Ability.IsCastable(Ult, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Ult),0) then Ability.CastTarget(Ult, hero) return end
+        if Ult and Menu.IsEnabled(Shadow.optionEnableUlt) and Ability.IsCastable(Ult, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Ult),0) then Ability.CastTarget(Ult, hero) return end
+        
+        if Glimmer and Menu.IsEnabled(Shadow.optionEnableGlimmer) and Ability.IsCastable(Glimmer, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Glimmer),0) then Ability.CastTarget(Glimmer, myHero) return end
     end
 end
 	
