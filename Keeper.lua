@@ -16,34 +16,23 @@ if not Menu.IsKeyDown(Keeper.optionKey) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_keeper_of_the_light" then return end
     local hero = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
-    local heroPos = Entity.GetAbsOrigin(hero)
-	local mana = NPC.GetMana(myHero)
+    local mousePos = Input.GetWorldCursorPos()
+    local mana = NPC.GetMana(myHero)
 	
 	if not hero then return end
 	
     local Leak = NPC.GetAbility(myHero, "keeper_of_the_light_mana_leak")
-    local Blinding = NPC.GetAbility(myHero, "keeper_of_the_light_blinding_light")
     local ForceStaff  = NPC.GetItem(myHero, "item_force_staff", true)
-    local Pike  = NPC.GetItem(myHero, "item_hurricane_pike", true)
 	
 	if Menu.IsEnabled(Keeper.optionEnable) then
 		     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Leak and Ability.IsCastable(Leak, mana) then Ability.CastTarget(Leak, hero) return 
-	end
-		     
+	and Leak and Ability.IsCastable(Leak, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Leak)) then Ability.CastTarget(Leak, hero) return end
+			     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and ForceStaff and Ability.IsCastable(ForceStaff, mana) then Ability.CastTarget(ForceStaff, hero) return 
-	end 
-		
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Pike and Ability.IsCastable(Pike, mana) then Ability.CastTarget(Pike, hero) return 
+	and ForceStaff and Ability.IsCastable(ForceStaff, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(ForceStaff)) and NPC.HasModifier(hero, "modifier_keeper_of_the_light_mana_leak") then Ability.CastTarget(ForceStaff, hero) return end
 	end
-		
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Blinding and Ability.IsCastable(Blinding, mana) then Ability.CastPosition(Blinding, heroPos) return 
-	end
-end
+	Player.PrepareUnitOrders(Players.GetLocal(),4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
 end
 	
 return Keeper
