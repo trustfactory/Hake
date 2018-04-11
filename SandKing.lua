@@ -38,6 +38,7 @@ if not Menu.IsKeyDown(Sandking.optionKey) then return end
     local Sandstorm = NPC.GetAbility(myHero, "sandking_sand_storm")
     
     local BKB = NPC.GetItem(myHero, "item_black_king_bar", true)
+    local Hood = NPC.GetItem(myHero, "item_hood_of_defiance", true)
     local Pipe = NPC.GetItem(myHero, "item_pipe", true)
     local Blink  = NPC.GetItem(myHero, "item_blink", true)
     local Veil  = NPC.GetItem(myHero, "item_veil_of_discord", true)
@@ -45,9 +46,13 @@ if not Menu.IsKeyDown(Sandking.optionKey) then return end
 	
 	if Menu.IsEnabled(Sandking.optionEnable) then
 	
-	if Pipe and Ability.IsCastable(Pipe, mana) then Ability.CastNoTarget(Pipe) return end
+	if not NPC.IsPositionInRange(myHero,Entity.GetAbsOrigin(hero), 0 , 275) then 
+	if Blink and Ability.IsCastable(Blink, mana) and hero ~= nil and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),1200) then Ability.CastPosition(Blink, mousePos) return end
+	end
 	
-	if Blink and Ability.IsCastable(Blink, mana) then Ability.CastPosition(Blink, mousePos) return end
+	if Hood and Ability.IsCastable(Hood, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),1200) then Ability.CastNoTarget(Hood) return end
+	
+	if Pipe and Ability.IsCastable(Pipe, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),1200) then Ability.CastNoTarget(Pipe) return end
 	
 	if Veil and Ability.IsCastable(Veil, mana) then Ability.CastPosition(Veil, heroPos) return end
 	
@@ -77,6 +82,7 @@ if not Menu.IsKeyDown(Sandking.optionKey2) then return end
     local Sandstorm = NPC.GetAbility(myHero, "sandking_sand_storm")
     
     local BKB = NPC.GetItem(myHero, "item_black_king_bar", true)
+    local Hood = NPC.GetItem(myHero, "item_hood_of_defiance", true)
     local Pipe = NPC.GetItem(myHero, "item_pipe", true)
     local Blink  = NPC.GetItem(myHero, "item_blink", true)
     local Veil  = NPC.GetItem(myHero, "item_veil_of_discord", true)
@@ -84,17 +90,22 @@ if not Menu.IsKeyDown(Sandking.optionKey2) then return end
 	
 	if Menu.IsEnabled(Sandking.optionEnable) then
 	
-	if BKB and Menu.IsEnabled(Sandking.BKBEnable) and Ability.IsCastable(BKB, mana)then Ability.CastNoTarget(BKB) return end
+	if BKB and Menu.IsEnabled(Sandking.BKBEnable) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),1200) and Ability.IsCastable(BKB, mana)then Ability.CastNoTarget(BKB) return end
 	
-	if Pipe and Ability.IsCastable(Pipe, mana) then Ability.CastNoTarget(Pipe) return end
 	
-	if Epicenter and Menu.IsEnabled(Sandking.optionEnableUlt) and Ability.IsCastable (Epicenter, mana) then Ability.CastNoTarget (Epicenter) return end
+	if Epicenter and Menu.IsEnabled(Sandking.optionEnableUlt) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),1200) and Ability.IsCastable (Epicenter, mana) then Ability.CastNoTarget (Epicenter) return end
   	if Ability.IsInAbilityPhase(Epicenter) then return end
   	if Ability.IsChannelling(Epicenter) then return end
 	
-	if Blink and Ability.IsCastable(Blink, mana) then Ability.CastPosition(Blink, mousePos) return end
+	if not NPC.IsPositionInRange(myHero,Entity.GetAbsOrigin(hero), 0 , 275) then 
+	if Blink and Ability.IsCastable(Blink, mana) and hero ~= nil and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),1200) then Ability.CastPosition(Blink, mousePos) return end
+	end
 	
-	if BKB and Menu.IsEnabled(Sandking.BKBEnable1) and Ability.IsCastable(BKB, mana) then Ability.CastNoTarget(BKB) return end
+	if Hood and Ability.IsCastable(Hood, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),1200) then Ability.CastNoTarget(Hood) return end
+	
+	if Pipe and Ability.IsCastable(Pipe, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),1200) then Ability.CastNoTarget(Pipe) return end
+	
+	if BKB and Menu.IsEnabled(Sandking.BKBEnable1) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),1200) and Ability.IsCastable(BKB, mana) then Ability.CastNoTarget(BKB) return end
 	
 	if Veil and Ability.IsCastable(Veil, mana) then Ability.CastPosition(Veil, heroPos) return end
 	
