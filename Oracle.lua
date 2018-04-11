@@ -36,8 +36,9 @@ if not Menu.IsKeyDown(Oracle.optionKey) then return end
 	end
 			     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and flames and Ability.IsCastable(flames, mana) then Ability.CastTarget(flames, hero) return end
+	and flames and Ability.IsCastable(flames, mana) and NPC.HasModifier(hero, "modifier_oracle_fates_edict") then Ability.CastTarget(flames, hero) return end
 	end
+	Player.PrepareUnitOrders(Players.GetLocal(), 4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) 
 end
 
 function Oracle.Combo2()
@@ -59,8 +60,9 @@ if not Menu.IsKeyDown(Oracle.optionKey2) then return end
 	end
 			     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and flames and Ability.IsCastable(flames, mana) then Ability.CastTarget(flames, hero) return end
+	and flames and Ability.IsCastable(flames, mana) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastTarget(flames, hero) return end
 	end
+	Player.PrepareUnitOrders(Players.GetLocal(), 4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
 end
 	
 return Oracle
