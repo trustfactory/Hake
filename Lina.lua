@@ -50,7 +50,7 @@ if not Menu.IsKeyDown(Lina.optionKey) then return end
     local DragonRange = 1075
   	local LagunaRange = 600
  
- --Talent Tree Bonus Range-- 	
+--Talent Tree Bonus Range-- 	
   	local TalentBonusRange = NPC.GetAbility(myHero, "special_bonus_cast_range_125")
     
     if Lens then
@@ -58,15 +58,10 @@ if not Menu.IsKeyDown(Lina.optionKey) then return end
     		LagunaRange = LagunaRange + 250
     end
 	
-	if BonusTalentRange and Ability.GetLevel(BonusTalentRange) > 0 then
+	if TalentBonusRange and Ability.GetLevel(TalentBonusRange) > 0 then
     		DragonRange = DragonRange + 125
     		LagunaRange = LagunaRange + 125
   	end		
-  	
-  	if Lens and BonusTalentRange and Ability.GetLevel(BonusTalentRange) > 0 then
-    		DragonRange = DragonRange + 375
-    		LagunaRange = LagunaRange + 375
-  	end	
 	
 	if Menu.IsEnabled(Lina.optionEnable) then
 	
@@ -75,8 +70,7 @@ if not Menu.IsKeyDown(Lina.optionKey) then return end
             Ability.CastPosition(Blink, (Entity.GetAbsOrigin(hero) + (Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(hero)):Normalized():Scaled(Menu.GetValue(Lina.optionBlinkRange)))) return end
         end
 	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and BKB and Menu.IsEnabled(Lina.optionEnableBKB) and Ability.IsCastable(BKB, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),575) then Ability.CastNoTarget(BKB) return end
+	if BKB and Menu.IsEnabled(Lina.optionEnableBKB) and Ability.IsCastable(BKB, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),575) then Ability.CastNoTarget(BKB) return end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 	and Euls and Menu.IsEnabled(Lina.optionEnableEuls) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Euls)) then Ability.CastTarget(Euls, hero) return end
@@ -85,7 +79,11 @@ if not Menu.IsKeyDown(Lina.optionKey) then return end
 	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), DragonRange) then Ability.CastTarget(Dragon, hero) return end
 			     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), LagunaRange) then Ability.CastTarget(Laguna, hero) return end
+	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), LagunaRange) then Ability.CastTarget(Laguna, hero) return
+	
+	elseif NPC.HasItem(myHero, "item_ultimate_scepter", true) then
+	if Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), LagunaRange) then Ability.CastTarget(Laguna, hero) return
+	end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 	and Orchid and Menu.IsEnabled(Lina.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Orchid)) then Ability.CastTarget(Orchid, hero) return end
@@ -96,7 +94,7 @@ if not Menu.IsKeyDown(Lina.optionKey) then return end
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Pike)) then Ability.CastTarget(Pike, hero) return end
 	end
-	Player.PrepareUnitOrders(Players.GetLocal(),4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
+	Player.PrepareUnitOrders(Players.GetLocal(),4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) end
 end
 	
 return Lina
