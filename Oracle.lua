@@ -35,6 +35,9 @@ if not Menu.IsKeyDown(Oracle.optionKey) then return end
     local Edict = NPC.GetAbility(myHero, "oracle_fates_edict")
     local Flames = NPC.GetAbility(myHero, "oracle_purifying_flames")
     
+    --Item Calls--
+    local Lens = NPC.GetItem(myHero, "item_aether_lens", true)
+    
     --Ability Ranges--
     local EdictRange = Ability.GetCastRange(Edict)
   	local FlamesRange = Ability.GetCastRange(Flames)
