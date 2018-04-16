@@ -34,11 +34,11 @@ function Lina.Combo()
 if not Menu.IsKeyDown(Lina.optionKey) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_lina" then return end
-    local hero = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
+    local enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
     local mousePos = Input.GetWorldCursorPos()
     local mana = NPC.GetMana(myHero)
 	
-	if not hero then return end
+	if not enemy then return end
 
 --Ability Calls--	
     local Dragon = NPC.GetAbility(myHero, "lina_dragon_slave")
@@ -72,44 +72,46 @@ if not Menu.IsKeyDown(Lina.optionKey) then return end
 	
 	if Menu.IsEnabled(Lina.optionEnable) then
 	
-	if hero and not NPC.IsIllusion(hero) and Utility.CanCastSpellOn(hero) then
-        if Blink and Menu.IsEnabled(Lina.optionBlink) and Ability.IsReady(Blink) and NPC.IsEntityInRange(myHero, hero, 1150 + Menu.GetValue(Lina.optionBlinkRange)) then
-            Ability.CastPosition(Blink, (Entity.GetAbsOrigin(hero) + (Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(hero)):Normalized():Scaled(Menu.GetValue(Lina.optionBlinkRange)))) return end
+	if enemy and not NPC.IsIllusion(enemy) and Utility.CanCastSpellOn(enemy) then
+        if Blink and Menu.IsEnabled(Lina.optionBlink) and Ability.IsReady(Blink) and NPC.IsEntityInRange(myHero, enemy, 1150 + Menu.GetValue(Lina.optionBlinkRange)) then
+            Ability.CastPosition(Blink, (Entity.GetAbsOrigin(enemy) + (Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Normalized():Scaled(Menu.GetValue(Lina.optionBlinkRange)))) return end
         end
 	
-	if BKB and Menu.IsEnabled(Lina.optionEnableBKB) and Ability.IsCastable(BKB, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),575) then Ability.CastNoTarget(BKB) return end
+	if BKB and Menu.IsEnabled(Lina.optionEnableBKB) and Ability.IsCastable(BKB, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy),575) then Ability.CastNoTarget(BKB) return end
 	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Euls and Menu.IsEnabled(Lina.optionEnableEuls) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Euls)) then Ability.CastTarget(Euls, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Euls and Menu.IsEnabled(Lina.optionEnableEuls) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Ability.GetCastRange(Euls)) then Ability.CastTarget(Euls, enemy) return end
 		     
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), DragonRange) then Ability.CastTarget(Dragon, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DragonRange) then Ability.CastTarget(Dragon, enemy) return end
 			     
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), LagunaRange) then Ability.CastTarget(Laguna, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), LagunaRange) then Ability.CastTarget(Laguna, enemy) return end
 	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Orchid and Menu.IsEnabled(Lina.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Orchid)) then Ability.CastTarget(Orchid, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Orchid and Menu.IsEnabled(Lina.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Ability.GetCastRange(Orchid)) then Ability.CastTarget(Orchid, enemy) return end
 	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Thorn and Menu.IsEnabled(Lina.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Thorn)) then Ability.CastTarget(Thorn, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Thorn and Menu.IsEnabled(Lina.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Ability.GetCastRange(Thorn)) then Ability.CastTarget(Thorn, enemy) return end
 	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Pike)) then Ability.CastTarget(Pike, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Ability.GetCastRange(Pike)) then Ability.CastTarget(Pike, enemy) return end
+	
+	if enemy and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) end
 	end
-	Player.PrepareUnitOrders(Players.GetLocal(),4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
+	if enemy and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then  Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, nil, Input.GetWorldCursorPos(), nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) end 
 end
 
 function Lina.Combo2()
 if not Menu.IsKeyDown(Lina.optionKey2) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_lina" then return end
-    local hero = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
-    local heroPos = Entity.GetAbsOrigin(hero)
+    local enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
+    local enemyPos = Entity.GetAbsOrigin(enemy)
     local mousePos = Input.GetWorldCursorPos()
     local mana = NPC.GetMana(myHero)
 	
-	if not hero then return end
+	if not enemy then return end
 
 --Ability Calls--	
     local Dragon = NPC.GetAbility(myHero, "lina_dragon_slave")
@@ -147,32 +149,34 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
 	
 	if Menu.IsEnabled(Lina.optionEnable) then
 	
-	if hero and not NPC.IsIllusion(hero) and Utility.CanCastSpellOn(hero) then
-        if Blink and Menu.IsEnabled(Lina.optionBlink) and Ability.IsReady(Blink) and NPC.IsEntityInRange(myHero, hero, 1150 + Menu.GetValue(Lina.optionBlinkRange)) then
-            Ability.CastPosition(Blink, (Entity.GetAbsOrigin(hero) + (Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(hero)):Normalized():Scaled(Menu.GetValue(Lina.optionBlinkRange)))) return end
+	if enemy and not NPC.IsIllusion(enemy) and Utility.CanCastSpellOn(enemy) then
+        if Blink and Menu.IsEnabled(Lina.optionBlink) and Ability.IsReady(Blink) and NPC.IsEntityInRange(myHero, enemy, 1150 + Menu.GetValue(Lina.optionBlinkRange)) then
+            Ability.CastPosition(Blink, (Entity.GetAbsOrigin(enemy) + (Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Normalized():Scaled(Menu.GetValue(Lina.optionBlinkRange)))) return end
         end
 	
-	if BKB and Menu.IsEnabled(Lina.optionEnableBKB) and Ability.IsCastable(BKB, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),575) then Ability.CastNoTarget(BKB) return end
+	if BKB and Menu.IsEnabled(Lina.optionEnableBKB) and Ability.IsCastable(BKB, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy),575) then Ability.CastNoTarget(BKB) return end
 	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), (ArrayRange)-25) then Ability.CastPosition(Array, heroPos) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastPosition(Array, enemyPos) return end
 			     	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), DragonRange) then Ability.CastTarget(Dragon, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastTarget(Dragon, enemy) return end
 			     
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), LagunaRange) then Ability.CastTarget(Laguna, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), LagunaRange) then Ability.CastTarget(Laguna, enemy) return end
 	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Orchid and Menu.IsEnabled(Lina.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Orchid)) then Ability.CastTarget(Orchid, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Orchid and Menu.IsEnabled(Lina.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Ability.GetCastRange(Orchid)) then Ability.CastTarget(Orchid, enemy) return end
 	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Thorn and Menu.IsEnabled(Lina.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Thorn)) then Ability.CastTarget(Thorn, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Thorn and Menu.IsEnabled(Lina.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Ability.GetCastRange(Thorn)) then Ability.CastTarget(Thorn, enemy) return end
 	
-	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Pike)) then Ability.CastTarget(Pike, hero) return end
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Ability.GetCastRange(Pike)) then Ability.CastTarget(Pike, enemy) return end
+	
+	if enemy and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) end
 	end
-	Player.PrepareUnitOrders(Players.GetLocal(),4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
+	if enemy and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then  Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, nil, Input.GetWorldCursorPos(), nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) end 
 end
 	
 return Lina
