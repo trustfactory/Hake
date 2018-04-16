@@ -139,10 +139,10 @@ if not Menu.IsKeyDown(Oracle.optionKey2) then return end
 	and Salve and Menu.IsEnabled(Oracle.optionEnableSalve) and Ability.IsReady(Salve) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), SalveRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and not NPC.HasModifier(hero, "modifier_flask_healing") then Ability.CastTarget(Salve, hero) return end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Urn and Menu.IsEnabled(Oracle.optionEnableUrn) and Ability.IsCastable(Urn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), UrnRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Urn) > 0 then Ability.CastTarget(Urn, hero) return end
+	and Urn and Menu.IsEnabled(Oracle.optionEnableUrn) and Ability.IsCastable(Urn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), UrnRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Urn) > 0 and not NPC.HasModifier(hero, "modifier_item_urn_heal") then Ability.CastTarget(Urn, hero) return end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Vessel and Menu.IsEnabled(Oracle.optionEnableVessel) and Ability.IsCastable(Vessel, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), VesselRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Vessel) > 0 then Ability.CastTarget(Vessel, hero) return end
+	and Vessel and Menu.IsEnabled(Oracle.optionEnableVessel) and Ability.IsCastable(Vessel, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), VesselRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Vessel) > 0 and not NPC.HasModifier(hero, "modifier_item_spirit_vessel_heal") then Ability.CastTarget(Vessel, hero) return end
 			     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 	and Flames and Ability.IsCastable(Flames, mana) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastTarget(Flames, hero) return end
