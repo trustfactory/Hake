@@ -172,11 +172,11 @@ if not Menu.IsKeyDown(Lina.optionKey) then return end
 	and Euls and Menu.IsEnabled(Lina.optionEnableEuls) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), EulsRange) then Ability.CastTarget(Euls, enemy) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.HasModifier(enemy, "modifier_eul_cyclone") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DragonRange) then Ability.CastTarget(Dragon, enemy) return
+	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DragonRange) then Ability.CastTarget(Dragon, enemy)
 	
 	else
 	  
-	if Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.HasModifier(enemy, "modifier_eul_cyclone") and NPC.IsEntityInRange(myHero, enemy, DragonRange) then
+	if Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsRunning(enemy) and NPC.IsEntityInRange(myHero, enemy, DragonRange) then
 		local pred = 0.45 + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 1200) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 		Ability.CastPosition(Dragon, Lina.castPrediction(myHero, enemy, pred))
 		return end
@@ -295,11 +295,11 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
 	end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsStunned(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DragonRange) then Ability.CastTarget(Dragon, enemy) return
+	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DragonRange) then Ability.CastTarget(Dragon, enemy)
 	
 	else
 			     	
-	if Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsStunned(enemy) and NPC.IsEntityInRange(myHero, enemy, DragonRange) then
+	if Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsRunning(enemy) and NPC.IsEntityInRange(myHero, enemy, DragonRange) then
 		local pred = 0.45 + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 1200) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 		Ability.CastPosition(Dragon, Lina.castPrediction(myHero, enemy, pred))
 		return end
