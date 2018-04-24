@@ -1,21 +1,22 @@
 local Utility = require("Utility")
 local Lina = {}
 
-Lina.optionKey = Menu.AddKeyOption({"Hero Specific","Lina"},"2. Euls Combo Key",Enum.ButtonCode.KEY_S)
-Lina.optionKey2 = Menu.AddKeyOption({"Hero Specific","Lina"},"3. Non-Euls Combo Key",Enum.ButtonCode.KEY_D)
+Lina.optionKey = Menu.AddKeyOption({"Hero Specific","Lina"},"3. Euls Combo Key",Enum.ButtonCode.KEY_D)
+Lina.optionKey2 = Menu.AddKeyOption({"Hero Specific","Lina"},"4. Non-Euls Combo Key",Enum.ButtonCode.KEY_F)
+Lina.optionKey3 = Menu.AddKeyOption({"Hero Specific","Lina"},"2. Dragon Harass Key",Enum.ButtonCode.KEY_S)
 Lina.optionEnable = Menu.AddOption({"Hero Specific","Lina"},"1. Enabled","Enable Or Disable Lina Combo Script")
-Lina.optionBlink = Menu.AddOption({"Hero Specific", "Lina" }, "4. Use Blink to Initiate {{Lina}}", "")
-Lina.optionBlinkRange = Menu.AddOption({"Hero Specific", "Lina" }, "5. Set Safe Blink Initiation Range {{Lina}}", "If using Pike then set at 475, If not using Pike set at 575", 200, 800, 25)
+Lina.optionBlink = Menu.AddOption({"Hero Specific", "Lina" }, "5. Use Blink to Initiate {{Lina}}", "")
+Lina.optionBlinkRange = Menu.AddOption({"Hero Specific", "Lina" }, "6. Set Safe Blink Initiation Range {{Lina}}", "If using Pike then set at 475, If not using Pike set at 575", 200, 800, 25)
 --Skills Toggle Menu--
-Lina.optionEnableDragon = Menu.AddOption({"Hero Specific","Lina","6. Skills"},"1. Use Dragon Slave","Enable Or Disable")
-Lina.optionEnableArray = Menu.AddOption({"Hero Specific","Lina","6. Skills"},"2. Use Light Strike Array","Enable Or Disable")
-Lina.optionEnableUlt = Menu.AddOption({"Hero Specific","Lina","6. Skills"},"3. Use Laguna Blade","Enable Or Disable")
+Lina.optionEnableDragon = Menu.AddOption({"Hero Specific","Lina","7. Skills"},"1. Use Dragon Slave","Enable Or Disable")
+Lina.optionEnableArray = Menu.AddOption({"Hero Specific","Lina","7. Skills"},"2. Use Light Strike Array","Enable Or Disable")
+Lina.optionEnableUlt = Menu.AddOption({"Hero Specific","Lina","7. Skills"},"3. Use Laguna Blade","Enable Or Disable")
 --Items Toggle Menu--
-Lina.optionEnableBKB = Menu.AddOption({"Hero Specific", "Lina","7. Items"},"1. Use BKB After Blink","Turn On/Off BKB in Combo")
-Lina.optionEnableEuls = Menu.AddOption({"Hero Specific","Lina","7. Items"},"2. Use Euls","Turn On/Off Euls in Combo")
-Lina.optionEnableOrchid = Menu.AddOption({"Hero Specific","Lina","7. Items"},"3. Use Orchid","Turn On/Off Orchid in Combo")
-Lina.optionEnablePike = Menu.AddOption({"Hero Specific","Lina","7. Items"},"4. Use Hurricane Pike","Turn On/Off Pike in Combo")
-Lina.optionEnableThorn = Menu.AddOption({"Hero Specific","Lina","7. Items"},"5. Use Bloodthorn","Turn On/Off Bloodthorn in Combo")
+Lina.optionEnableBKB = Menu.AddOption({"Hero Specific", "Lina","8. Items"},"1. Use BKB After Blink","Turn On/Off BKB in Combo")
+Lina.optionEnableEuls = Menu.AddOption({"Hero Specific","Lina","8. Items"},"2. Use Euls","Turn On/Off Euls in Combo")
+Lina.optionEnableOrchid = Menu.AddOption({"Hero Specific","Lina","8. Items"},"3. Use Orchid","Turn On/Off Orchid in Combo")
+Lina.optionEnablePike = Menu.AddOption({"Hero Specific","Lina","8. Items"},"4. Use Hurricane Pike","Turn On/Off Pike in Combo")
+Lina.optionEnableThorn = Menu.AddOption({"Hero Specific","Lina","8. Items"},"5. Use Bloodthorn","Turn On/Off Bloodthorn in Combo")
 
 function Lina.OnUpdate()
     if not Menu.IsEnabled(Lina.optionEnable) then return true end
@@ -26,6 +27,11 @@ function Lina.OnUpdate()
 	if not Menu.IsEnabled(Lina.optionEnable) then return true end
 	if Menu.IsKeyDown(Lina.optionKey2)then
     Lina.Combo2()
+	end
+	
+	if not Menu.IsEnabled(Lina.optionEnable) then return true end
+	if Menu.IsKeyDown(Lina.optionKey3) then
+    Lina.DragonHarass()
 	end
 end	
 
@@ -97,6 +103,44 @@ function Lina.GetMoveSpeed(enemy)
 	end
 			
     	return base_speed + bonus_speed
+end
+
+function Lina.DragonHarass(myHero)
+if not Menu.IsKeyDown(Lina.optionKey3) then return end
+local myHero = Heroes.GetLocal()
+    if NPC.GetUnitName(myHero) ~= "npc_dota_hero_lina" then return end
+    local enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
+    local mana = NPC.GetMana(myHero)
+    
+    if not enemy then return end
+    
+--Ability Calls--
+    local Dragon = NPC.GetAbility(myHero, "lina_dragon_slave")
+ 
+--Item Calls--
+	local Lens = NPC.GetItem(myHero, "item_aether_lens", true) 
+    
+--Ability Ranges--
+	local DragonRange = 1075
+	
+--Talent Tree Bonus Range-- 	
+  	local TalentBonusRange = NPC.GetAbility(myHero, "special_bonus_cast_range_125")
+  	
+  	if Lens then
+    	DragonRange = DragonRange + 250
+    end
+    
+    if TalentBonusRange and Ability.GetLevel(TalentBonusRange) > 0 then
+    	DragonRange = DragonRange + 125
+    end
+  	
+
+
+if Dragon and Menu.IsKeyDown(Lina.optionKey3) and Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsEntityInRange(myHero, enemy, DragonRange) then
+		local pred = 0.45 + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 1200) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
+		Ability.CastPosition(Dragon, Lina.castPrediction(myHero, enemy, pred))
+		return 
+	end
 end
 
 function Lina.Combo()
@@ -172,15 +216,7 @@ if not Menu.IsKeyDown(Lina.optionKey) then return end
 	and Euls and Menu.IsEnabled(Lina.optionEnableEuls) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), EulsRange) then Ability.CastTarget(Euls, enemy) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DragonRange) then Ability.CastTarget(Dragon, enemy)
-	
-	else
-	  
-	if Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsRunning(enemy) and NPC.IsEntityInRange(myHero, enemy, DragonRange) then
-		local pred = 0.45 + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 1200) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
-		Ability.CastPosition(Dragon, Lina.castPrediction(myHero, enemy, pred))
-		return end
-	end
+	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastTarget(Dragon, enemy) return end
 			     
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), LagunaRange) then Ability.CastTarget(Laguna, enemy) return end
@@ -295,16 +331,8 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
 	end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DragonRange) then Ability.CastTarget(Dragon, enemy)
-	
-	else
-			     	
-	if Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsRunning(enemy) and NPC.IsEntityInRange(myHero, enemy, DragonRange) then
-		local pred = 0.45 + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 1200) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
-		Ability.CastPosition(Dragon, Lina.castPrediction(myHero, enemy, pred))
-		return end
-	end
-			     
+	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) and Ability.SecondsSinceLastUse(Array)<=0.9 and Ability.SecondsSinceLastUse(Array)>0.7 then Ability.CastTarget(Dragon, enemy) return end
+	     	     
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), LagunaRange) then Ability.CastTarget(Laguna, enemy) return end
 	
