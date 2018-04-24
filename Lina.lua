@@ -18,6 +18,17 @@ Lina.optionEnableOrchid = Menu.AddOption({"Hero Specific","Lina","8. Items"},"3.
 Lina.optionEnablePike = Menu.AddOption({"Hero Specific","Lina","8. Items"},"4. Use Hurricane Pike","Turn On/Off Pike in Combo")
 Lina.optionEnableThorn = Menu.AddOption({"Hero Specific","Lina","8. Items"},"5. Use Bloodthorn","Turn On/Off Bloodthorn in Combo")
 
+-- global Variables
+Lina.lastAttackTime = 0
+Lina.lastAttackTime2 = 0
+Lina.LastTarget = nil
+
+function Lina.ResetGlobalVariables()
+    Lina.lastAttackTime = 0
+	Lina.lastAttackTime2 = 0
+	Lina.LastTarget = nil
+end
+
 function Lina.OnUpdate()
     if not Menu.IsEnabled(Lina.optionEnable) then return true end
 	if Menu.IsKeyDown(Lina.optionKey)then
@@ -105,6 +116,157 @@ function Lina.GetMoveSpeed(enemy)
     	return base_speed + bonus_speed
 end
 
+function Lina.isHeroChannelling(myHero)
+
+	if not myHero then return true end
+
+	if NPC.IsChannellingAbility(myHero) then return true end
+	if NPC.HasModifier(myHero, "modifier_teleporting") then return true end
+
+	return false
+end
+
+function Lina.heroCanCastItems(myHero)
+
+	if not myHero then return false end
+	if not Entity.IsAlive(myHero) then return false end
+
+	if NPC.IsStunned(myHero) then return false end
+	if NPC.HasModifier(myHero, "modifier_bashed") then return false end
+	if NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) then return false end	
+	if NPC.HasModifier(myHero, "modifier_eul_cyclone") then return false end
+	if NPC.HasModifier(myHero, "modifier_obsidian_destroyer_astral_imprisonment_prison") then return false end
+	if NPC.HasModifier(myHero, "modifier_shadow_demon_disruption") then return false end	
+	if NPC.HasModifier(myHero, "modifier_invoker_tornado") then return false end
+	if NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_HEXED) then return false end
+	if NPC.HasModifier(myHero, "modifier_legion_commander_duel") then return false end
+	if NPC.HasModifier(myHero, "modifier_axe_berserkers_call") then return false end
+	if NPC.HasModifier(myHero, "modifier_winter_wyvern_winters_curse") then return false end
+	if NPC.HasModifier(myHero, "modifier_bane_fiends_grip") then return false end
+	if NPC.HasModifier(myHero, "modifier_bane_nightmare") then return false end
+	if NPC.HasModifier(myHero, "modifier_faceless_void_chronosphere_freeze") then return false end
+	if NPC.HasModifier(myHero, "modifier_enigma_black_hole_pull") then return false end
+	if NPC.HasModifier(myHero, "modifier_magnataur_reverse_polarity") then return false end
+	if NPC.HasModifier(myHero, "modifier_pudge_dismember") then return false end
+	if NPC.HasModifier(myHero, "modifier_shadow_shaman_shackles") then return false end
+	if NPC.HasModifier(myHero, "modifier_techies_stasis_trap_stunned") then return false end
+	if NPC.HasModifier(myHero, "modifier_storm_spirit_electric_vortex_pull") then return false end
+	if NPC.HasModifier(myHero, "modifier_tidehunter_ravage") then return false end
+	if NPC.HasModifier(myHero, "modifier_windrunner_shackle_shot") then return false end
+	if NPC.HasModifier(myHero, "modifier_item_nullifier_mute") then return false end
+
+	return true	
+end
+
+function Lina.IsInAbilityPhase(myHero)
+
+	if not myHero then return false end
+
+	local myAbilities = {}
+
+	for i= 0, 10 do
+		local ability = NPC.GetAbilityByIndex(myHero, i)
+		if ability and Entity.IsAbility(ability) and Ability.GetLevel(ability) > 0 then
+			table.insert(myAbilities, ability)
+		end
+	end
+
+	if #myAbilities < 1 then return false end
+
+	for _, v in ipairs(myAbilities) do
+		if v then
+			if Ability.IsInAbilityPhase(v) then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
+function Lina.Debugger(time, npc, ability, order)
+
+	if not Menu.IsEnabled(Lina.optionEnable) then return end
+	Log.Write(tostring(time) .. " " .. tostring(NPC.GetUnitName(npc)) .. " " .. tostring(ability) .. " " .. tostring(order))
+end
+
+function Lina.GenericMainAttack(myHero, attackType, target, position)
+	
+	if not myHero then return end
+	if not target and not position then return end
+
+	if Lina.isHeroChannelling(myHero) == true then return end
+	if Lina.heroCanCastItems(myHero) == false then return end
+	if Lina.IsInAbilityPhase(myHero) == true then return end
+
+	if Menu.IsEnabled(Lina.optionEnable) then
+		if target ~= nil then
+			Lina.GenericAttackIssuer(attackType, target, position, myHero)
+		end
+	else
+		Lina.GenericAttackIssuer(attackType, target, position, myHero)
+	end
+end
+
+function Lina.GenericAttackIssuer(attackType, target, position, npc)
+
+	if not npc then return end
+	if not target and not position then return end
+	if os.clock() - Lina.lastAttackTime2 < 0.5 then return end
+
+	if attackType == "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET" then
+		if target ~= nil then
+			if target ~= Lina.LastTarget then
+				Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET, target, Vector(0, 0, 0), ability, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, npc)
+				Lina.LastTarget = target
+				Lina.Debugger(GameRules.GetGameTime(), npc, "attack", "DOTA_UNIT_ORDER_ATTACK_TARGET")
+			end
+		end
+	end
+
+	if attackType == "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_MOVE" then
+		if position ~= nil then
+			if not NPC.IsAttacking(npc) or not NPC.IsRunning(npc) then
+				if position:__tostring() ~= Lina.LastTarget then
+					Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_MOVE, target, position, ability, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, npc)
+					Lina.LastTarget = position:__tostring()
+					Lina.Debugger(GameRules.GetGameTime(), npc, "attackMove", "DOTA_UNIT_ORDER_ATTACK_MOVE")
+				end
+			end
+		end
+	end
+
+	if attackType == "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION" then
+		if position ~= nil then
+			if position:__tostring() ~= Lina.LastTarget then
+				Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, target, position, ability, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, npc)
+				Lina.LastTarget = position:__tostring()
+				Lina.Debugger(GameRules.GetGameTime(), npc, "move", "DOTA_UNIT_ORDER_MOVE_TO_POSITION")
+			end
+		end
+	end
+
+	if target ~= nil then
+		if target == Lina.LastTarget then
+			if not NPC.IsAttacking(npc) then
+				Lina.LastTarget = nil
+				Lina.lastAttackTime2 = os.clock()
+				return
+			end
+		end
+	end
+
+	if position ~= nil then
+		if position:__tostring() == Lina.LastTarget then
+			if not NPC.IsRunning(npc) then
+				Lina.LastTarget = nil
+				Lina.lastAttackTime2 = os.clock()
+				return
+			end
+		end
+	end
+end
+
 function Lina.DragonHarass(myHero)
 if not Menu.IsKeyDown(Lina.optionKey3) then return end
 local myHero = Heroes.GetLocal()
@@ -138,7 +300,7 @@ local myHero = Heroes.GetLocal()
 
 if Dragon and Menu.IsKeyDown(Lina.optionKey3) and Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsEntityInRange(myHero, enemy, DragonRange) then
 		local pred = 0.45 + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 1200) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
-		Ability.CastPosition(Dragon, Lina.castPrediction(myHero, enemy, pred)) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
+		Ability.CastPosition(Dragon, Lina.castPrediction(myHero, enemy, pred)) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil)
 		return 
 	end
 end
@@ -216,21 +378,27 @@ if not Menu.IsKeyDown(Lina.optionKey) then return end
 	and Euls and Menu.IsEnabled(Lina.optionEnableEuls) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), EulsRange) then Ability.CastTarget(Euls, enemy) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastTarget(Dragon, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Dragon and Ability.IsReady(Dragon) and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), EulsRange) then Ability.CastTarget(Dragon, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 			     
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), LagunaRange) then Ability.CastTarget(Laguna, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Laguna and Ability.IsReady(Laguna) and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), EulsRange) then Ability.CastTarget(Laguna, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Orchid and Menu.IsEnabled(Lina.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), OrchidRange) then Ability.CastTarget(Orchid, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Orchid and Menu.IsEnabled(Lina.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), OrchidRange) then Ability.CastTarget(Orchid, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Thorn and Menu.IsEnabled(Lina.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ThornRange) then Ability.CastTarget(Thorn, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Thorn and Menu.IsEnabled(Lina.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ThornRange) then Ability.CastTarget(Thorn, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), PikeRange) then Ability.CastTarget(Pike, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
-
-	if enemy and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) and not NPC.HasModifier(myHero, "modifier_item_hurricane_pike_range") then Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, enemy, mousePos, enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), PikeRange) then Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION", enemy, nil, enemyPos) return
+	else
+	Ability.CastTarget(Pike, enemy) return end
+	else
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), PikeRange) then Ability.CastTarget(Pike, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
+    
+    Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil)
+		return
 	end
 end
 
@@ -320,31 +488,37 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
 				end
 			end
 			if NPC.IsPositionInRange(myHero, saveCastPos, ArrayRange) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") then	
-				Ability.CastPosition(Array, saveCastPos) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
+				Ability.CastPosition(Array, saveCastPos) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil)
 				return
 			end
 		else
-			Ability.CastPosition(Array, predPos) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
+			Ability.CastPosition(Array, predPos) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil)
 			return
 		end
 	end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastTarget(Dragon, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastTarget(Dragon, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 	     	     
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), LagunaRange) then Ability.CastTarget(Laguna, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Laguna and Menu.IsEnabled(Lina.optionEnableUlt) and Ability.IsCastable(Laguna, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), LagunaRange) then Ability.CastTarget(Laguna, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Orchid and Menu.IsEnabled(Lina.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), OrchidRange) then Ability.CastTarget(Orchid, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Orchid and Menu.IsEnabled(Lina.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), OrchidRange) then Ability.CastTarget(Orchid, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Thorn and Menu.IsEnabled(Lina.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ThornRange) then Ability.CastTarget(Thorn, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Thorn and Menu.IsEnabled(Lina.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ThornRange) then Ability.CastTarget(Thorn, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), PikeRange) then Ability.CastTarget(Pike, enemy) Player.PrepareUnitOrders(Players.GetLocal(),4, enemy, Vector(0,0,0), enemy, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
-	
-	if enemy and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange+10) and not NPC.HasModifier(myHero, "modifier_item_hurricane_pike_range") then Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, enemy, mousePos, nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) return end
+	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), PikeRange) then Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION", enemy, nil, enemyPos) return
+	else
+	Ability.CastTarget(Pike, enemy) return end
+	else
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), PikeRange) then Ability.CastTarget(Pike, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
+
+    Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil)
+		return
 	end
 end
 	
