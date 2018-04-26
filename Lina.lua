@@ -6,7 +6,7 @@ Lina.optionKey2 = Menu.AddKeyOption({"Hero Specific","Lina"},"4. Non-Euls Combo 
 Lina.optionKey3 = Menu.AddKeyOption({"Hero Specific","Lina"},"2. Dragon Harass Key",Enum.ButtonCode.KEY_S)
 Lina.optionEnable = Menu.AddOption({"Hero Specific","Lina"},"1. Enabled","Enable Or Disable Lina Combo Script")
 Lina.optionBlink = Menu.AddOption({"Hero Specific", "Lina" }, "5. Use Blink to Initiate {{Lina}}", "")
-Lina.optionBlinkRange = Menu.AddOption({"Hero Specific", "Lina" }, "6. Set Safe Blink Initiation Range {{Lina}}", "If using Pike then set at 475, If not using Pike set at 575", 200, 800, 25)
+Lina.optionBlinkRange = Menu.AddOption({"Hero Specific", "Lina" }, "6. Set Safe Blink Initiation Range {{Lina}}", "If Pike then set at 400, if Euls/No Pike (575), if Lens (Add 250), if Talent Range (Add 200), if both then add totals", 400, 1050, 25)
 --Skills Toggle Menu--
 Lina.optionEnableDragon = Menu.AddOption({"Hero Specific","Lina","7. Skills"},"1. Use Dragon Slave","Enable Or Disable")
 Lina.optionEnableArray = Menu.AddOption({"Hero Specific","Lina","7. Skills"},"2. Use Light Strike Array","Enable Or Disable")
@@ -468,21 +468,21 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
 	
 	if BKB and Menu.IsEnabled(Lina.optionEnableBKB) and Ability.IsCastable(BKB, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy),575) then Ability.CastNoTarget(BKB) return end
 	
-	if Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and NPC.IsEntityInRange(myHero, enemy, ArrayRange) then
-		local pred = 1.5 + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
+	if Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and NPC.IsEntityInRange(myHero, enemy, ArrayRange, 0) then
+		local pred = 0.95 + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 		local predPos = Lina.castPrediction(myHero, enemy, pred)
-		if not NPC.IsPositionInRange(myHero, predPos, ArrayRange) then
+		if not NPC.IsPositionInRange(myHero, predPos, ArrayRange, 0) then
 			local myPos = Entity.GetAbsOrigin(myHero)
 			local dist = (myPos - predPos):Length2D()
 			local saveCastPos = predPos
 			for k = 1, math.floor(dist/25) do
 				local searchPos = predPos + (myPos - predPos):Normalized():Scaled(k*25)
-				if NPC.IsPositionInRange(myHero, searchPos, ArrayRange) then
+				if NPC.IsPositionInRange(myHero, searchPos, ArrayRange, 0) then
 					saveCastPos = searchPos
 					break
 				end
 			end
-			if NPC.IsPositionInRange(myHero, saveCastPos, ArrayRange) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") then	
+			if NPC.IsPositionInRange(myHero, saveCastPos, ArrayRange, 0) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") then	
 				Ability.CastPosition(Array, saveCastPos) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil)
 				return
 			end
@@ -503,12 +503,7 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and Thorn and Menu.IsEnabled(Lina.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ThornRange) then Ability.CastTarget(Thorn, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
-	
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), PikeRange) then Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION", enemy, nil, enemyPos) return
-	else
-	Ability.CastTarget(Pike, enemy) return end
-	else
+
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and Pike and Menu.IsEnabled(Lina.optionEnablePike) and Ability.IsCastable(Pike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), PikeRange) then Ability.CastTarget(Pike, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 
