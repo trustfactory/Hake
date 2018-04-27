@@ -412,7 +412,7 @@ if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 		if Blackhole and Ability.IsInAbilityPhase(Blackhole) or Ability.IsChannelling(Blackhole) then
 			if Ability.IsReady(Shuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange +10) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not NPC.IsLinkensProtected(enemy) then 
 			Ability.CastTarget(Shuriken, enemy) return end
-				if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
+				if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVISIBLE) and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
 			Ability.CastNoTarget(WindWalk) return end
 				end
 			end
@@ -424,7 +424,7 @@ if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 		if Epicenter and Ability.IsChannelling(Epicenter) then
 			if Ability.IsReady(Shuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not NPC.IsLinkensProtected(enemy) then 
 			Ability.CastTarget(Shuriken, enemy) return end
-				if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
+				if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVISIBLE) and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
 			Ability.CastNoTarget(WindWalk) return end
 				end
 			end
@@ -436,7 +436,7 @@ if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 		if Deathward and Ability.IsInAbilityPhase(Deathward) or Ability.IsChannelling(Deathward) then
 			if Ability.IsReady(Shuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not NPC.IsLinkensProtected(enemy) then 
 			Ability.CastTarget(Shuriken, enemy) return end
-				if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
+				if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVISIBLE) and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
 			Ability.CastNoTarget(WindWalk) return end
 				end
 			end
@@ -448,7 +448,7 @@ if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 		if Freezing and Ability.IsInAbilityPhase(Freezing) or Ability.IsChannelling(Freezing) then
 			if Ability.IsReady(Shuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not NPC.IsLinkensProtected(enemy) then 
 			Ability.CastTarget(Shuriken, enemy) return end
-				if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
+				if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVISIBLE) and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
 			Ability.CastNoTarget(WindWalk) return end
 				end
 			end
@@ -460,7 +460,7 @@ if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 			if Grip and Ability.IsInAbilityPhase(Grip) or Ability.IsChannelling(Grip) then
 				if Ability.IsReady(Shuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not NPC.IsLinkensProtected(enemy) then 
 				Ability.CastTarget(Shuriken, enemy) return end
-					if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
+					if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVISIBLE) and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
 				Ability.CastNoTarget(WindWalk) return end
 					end
 				end
@@ -472,7 +472,7 @@ if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 			if Requiem and Ability.IsInAbilityPhase(Requiem) then
 			    if Ability.IsReady(Shuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not NPC.IsLinkensProtected(enemy) then 
 				Ability.CastTarget(Shuriken, enemy) return end
-					if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
+					if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVISIBLE) and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
 				Ability.CastNoTarget(WindWalk) return end
 					end
 				end
@@ -484,7 +484,7 @@ if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 			if Drain and Ability.IsChannelling(Drain) then
 				if Ability.IsReady(Shuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not NPC.IsLinkensProtected(enemy) then 
 				Ability.CastTarget(Shuriken, enemy) return end
-					if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
+					if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVISIBLE) and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
 				Ability.CastNoTarget(WindWalk) return end
 					end
 				end
@@ -496,7 +496,7 @@ if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 			if Charge and NPC.HasModifier(enemy, "modifier_spirit_breaker_charge_of_darkness") then
 				if Ability.IsReady(Shuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange +10) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not NPC.IsLinkensProtected(enemy) then 
 				Ability.CastTarget(Shuriken, enemy) return end
-					if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
+					if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVISIBLE) and Ability.SecondsSinceLastUse(Shuriken)<=1 and Ability.SecondsSinceLastUse(Shuriken)>0 then
 				Ability.CastNoTarget(WindWalk) return end
 					end
 				end
