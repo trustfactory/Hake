@@ -4,41 +4,46 @@ local BountyHunter = {}
 BountyHunter.optionEnable = Menu.AddOption({"Hero Specific", "Bounty Hunter"}, "0. Enabled", "Enable Or Disable BH Auto Script")
 BountyHunter.optionKillSteal = Menu.AddOption({"Hero Specific", "Bounty Hunter"}, "1. Tracked Bounce KS", "Calculates killable target through bounces if tracked")
 BountyHunter.optionKey = Menu.AddKeyOption({"Hero Specific","Bounty Hunter"}, "2. Combo Key", Enum.ButtonCode.KEY_S)
-BountyHunter.ToggleKey = Menu.AddKeyOption({"Hero Specific", "Bounty Hunter"}, "3.Toggle Auto Mode Key", Enum.ButtonCode.KEY_D)
-BountyHunter.InvisAfterTrack = Menu.AddOption({"Hero Specific", "Bounty Hunter"}, "4. Auto-Cast Shadow Walk post-Track", "Auto-casts WindWalk after Track is Auto cast")
-BountyHunter.ScrollBoTsCancel = Menu.AddOption({"Hero Specific", "Bounty Hunter"}, "5. Auto-Cancel TPs and Ult Channel", "Cancels TP/BoT/Ult Channels with Shuriken")
+BountyHunter.ToggleKey = Menu.AddKeyOption({"Hero Specific", "Bounty Hunter"}, "3. Auto Mode Toggle Key", Enum.ButtonCode.KEY_D)
+BountyHunter.AutoTrackStyle = Menu.AddOption({"Hero Specific", "Bounty Hunter"}, "3.1. Auto Track Enable", "Enable or Disable Auto Track Style")
+BountyHunter.AutoTrackStyleValues = Menu.AddOption({"Hero Specific", "Bounty Hunter"}, "3.2. Auto Track Style", "Choose between Auto-Shadow Walk after Auto Track, or only Auto Track",  0, 1, 1)
+BountyHunter.ScrollBoTsCancel = Menu.AddOption({"Hero Specific", "Bounty Hunter"}, "3.3. Auto-Cancel TPs and Ult Channel", "Cancels TP/BoT/Ult Channels with Shuriken")
 
 --Auto Track Kill Threshold--
-BountyHunter.ThresholdEnable = Menu.AddOption({"Hero Specific", "Bounty Hunter"}, "6. Enable Auto Track on %", "Enables or Disable Auto Track on Desired Enemy HP %")
-BountyHunter.KillableHealth = Menu.AddOption({ "Hero Specific", "Bounty Hunter", "7. Set Threshold %"}, "Treshold Hero Health", "Set threshold for Killable Enemy", 5, 75, 5)
+BountyHunter.ThresholdEnable = Menu.AddOption({"Hero Specific", "Bounty Hunter"}, "4. Enable Auto Track on %", "Enables or Disable Auto Track on Desired Enemy HP %")
+BountyHunter.KillableHealth = Menu.AddOption({ "Hero Specific", "Bounty Hunter", "4.1 Set Threshold %"}, "Treshold Hero Health", "Set threshold for Killable Enemy", 5, 75, 5)
 BountyHunter.FontLarge = Renderer.LoadFont("Calibri", 24, Enum.FontWeight.EXTRABOLD)
 
 --Skills Toggle Menu--
-BountyHunter.optionEnableWind = Menu.AddOption({"Hero Specific","Bounty Hunter","8. Skills"},"Use Shadow Walk in Combo","Enable Or Disable")
-BountyHunter.optionEnableShuriken = Menu.AddOption({"Hero Specific","Bounty Hunter","8. Skills"},"Use Shuriken in Combo","Enable Or Disable")
-BountyHunter.optionEnableTrack = Menu.AddOption({"Hero Specific","Bounty Hunter","8. Skills"},"Use Track in Combo","Enable Or Disable")
+BountyHunter.optionEnableWind = Menu.AddOption({"Hero Specific","Bounty Hunter","5. Skills"},"Use Shadow Walk in Combo","Enable Or Disable")
+BountyHunter.optionEnableShuriken = Menu.AddOption({"Hero Specific","Bounty Hunter","5. Skills"},"Use Shuriken in Combo","Enable Or Disable")
+BountyHunter.optionEnableTrack = Menu.AddOption({"Hero Specific","Bounty Hunter","5. Skills"},"Use Track in Combo","Enable Or Disable")
 
 --Items Toggle Menu--
-BountyHunter.optionEnableAbyssal = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Abyssal in Combo","Use Abyssal on Target During Combo")
-BountyHunter.optionEnableButterfly = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Butterfly in Combo","Use Butterfly on Self During Combo")
-BountyHunter.optionEnableThorn = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use BloodThorn in Combo","Use BloodThorn on Target During Combo")
-BountyHunter.optionEnableDagon = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Dagon in Combo","Use Dagon on Target During Combo")
-BountyHunter.optionEnableEBlade = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use EBlade in Combo","Use EBlade on Target During Combo")
-BountyHunter.optionEnableHalberd = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Halberd in Combo","Use Halberd on Target During Combo")
-BountyHunter.optionEnableMedallion = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Medallion in Combo","Use Medallion on Target During Combo")
-BountyHunter.optionEnableNullifier = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Nullifier in Combo","Use Nullifier on Target During Combo")
-BountyHunter.optionEnableOrchid = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Orchid in Combo","Use Orchid on Target During Combo")
-BountyHunter.optionEnableScythe = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Scythe in Combo","Use Scythe on Target During Combo")
-BountyHunter.optionEnableSolarCrest = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Solar Crest in Combo","Use Solar Crest on Target During Combo")
-BountyHunter.optionEnableUrn = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Urn in Combo","Use Urn on Target During Combo")
-BountyHunter.optionEnableVessel = Menu.AddOption({"Hero Specific","Bounty Hunter","9. Items"},"Use Vessel in Combo","Use Vessel on Target During Combo")
+BountyHunter.optionEnableAbyssal = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Abyssal in Combo","Use Abyssal on Target During Combo")
+BountyHunter.optionEnableButterfly = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Butterfly in Combo","Use Butterfly on Self During Combo")
+BountyHunter.optionEnableThorn = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use BloodThorn in Combo","Use BloodThorn on Target During Combo")
+BountyHunter.optionEnableDagon = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Dagon in Combo","Use Dagon on Target During Combo")
+BountyHunter.optionEnableEBlade = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use EBlade in Combo","Use EBlade on Target During Combo")
+BountyHunter.optionEnableHalberd = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Halberd in Combo","Use Halberd on Target During Combo")
+BountyHunter.optionEnableMedallion = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Medallion in Combo","Use Medallion on Target During Combo")
+BountyHunter.optionEnableNullifier = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Nullifier in Combo","Use Nullifier on Target During Combo")
+BountyHunter.optionEnableOrchid = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Orchid in Combo","Use Orchid on Target During Combo")
+BountyHunter.optionEnableScythe = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Scythe in Combo","Use Scythe on Target During Combo")
+BountyHunter.optionEnableSolarCrest = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Solar Crest in Combo","Use Solar Crest on Target During Combo")
+BountyHunter.optionEnableUrn = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Urn in Combo","Use Urn on Target During Combo")
+BountyHunter.optionEnableVessel = Menu.AddOption({"Hero Specific","Bounty Hunter","6. Items"},"Use Vessel in Combo","Use Vessel on Target During Combo")
 
 local AutoMode = false
 
--- global Variables
+---Global Variables---
 BountyHunter.lastAttackTime = 0
 BountyHunter.lastAttackTime2 = 0
 BountyHunter.LastTarget = nil
+
+---Menu Set Values---
+Menu.SetValueName(BountyHunter.AutoTrackStyleValues, 0, 'Invis After Track')
+Menu.SetValueName(BountyHunter.AutoTrackStyleValues, 1, 'Track Only')
 
 function BountyHunter.ResetGlobalVariables()
     BountyHunter.lastAttackTime = 0
@@ -249,9 +254,9 @@ function BountyHunter.OnUpdate()
     end
     if not AutoMode then return 
 	end
-	
-	if Menu.IsEnabled(BountyHunter.InvisAfterTrack) and AutoMode then
-        BountyHunter.AutoTrackInvis()
+
+    if Menu.IsEnabled(BountyHunter.AutoTrackStyle) and AutoMode then
+        BountyHunter.AutoTrack()
     end
     
     if Menu.IsEnabled(BountyHunter.ScrollBoTsCancel) and AutoMode then
@@ -328,7 +333,7 @@ function BountyHunter.KillSteal()
     end
 end
 
-function BountyHunter.AutoTrackInvis()
+function BountyHunter.AutoTrack()
     if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 	local myHero = Heroes.GetLocal()
 	if NPC.GetUnitName(myHero) ~= "npc_dota_hero_bounty_hunter" then return end
@@ -337,7 +342,6 @@ function BountyHunter.AutoTrackInvis()
     
     
 	--Ability Calls--
-	local Shuriken = NPC.GetAbility(myHero, "bounty_hunter_shuriken_toss")
 	local WindWalk = NPC.GetAbility(myHero, "bounty_hunter_wind_walk")
 	local Track = NPC.GetAbility(myHero, "bounty_hunter_track")
 	
@@ -345,34 +349,28 @@ function BountyHunter.AutoTrackInvis()
 	local Lens = NPC.GetItem(myHero, "item_aether_lens", true)
 	
 	--Ability Ranges--
-    local ShurikenRange = Ability.GetCastRange(Shuriken)
   	local TrackRange = Ability.GetCastRange(Track)
   	
   	--Lens Bonus Range--
   	if Lens then
-    	ShurikenRange = ShurikenRange + 250
     	TrackRange = TrackRange + 250
     end
-
+    
     for i = 1, Heroes.Count() do
 		local enemy = Heroes.Get(i)
 		local sameTeam = Entity.GetTeamNum(enemy) == myTeam
-		if not sameTeam and not Entity.IsDormant(enemy) and Entity.GetHealth(enemy) > 0 then
 			local pos = Entity.GetAbsOrigin(enemy)
-			if Menu.IsEnabled(BountyHunter.InvisAfterTrack) then
-				if Ability.IsReady(Track) and Ability.IsReady(WindWalk) and NPC.GetMana(myHero) > Ability.GetManaCost(WindWalk) + Ability.GetManaCost(Track) and NPC.IsEntityInRange(enemy, myHero, TrackRange) and not NPC.HasModifier(enemy, "modifier_bounty_hunter_track") and not NPC.IsLinkensProtected(enemy) then
-					Ability.CastTarget(Track, enemy)
-					Ability.CastNoTarget(WindWalk) return
-				end
-			end
-			
-			else
-			    
-			if not Menu.IsEnabled(BountyHunter.InvisAfterTrack) then
-				Ability.CastTarget(Track, hero) return
-			end
-		end
-    end
+			if Ability.IsReady(Track) and Ability.IsReady(WindWalk) and NPC.GetMana(myHero) > Ability.GetManaCost(WindWalk) + Ability.GetManaCost(Track) and NPC.IsEntityInRange(enemy, myHero, TrackRange) and not NPC.HasModifier(enemy, "modifier_bounty_hunter_track") and not NPC.IsLinkensProtected(enemy) then
+			if not sameTeam and not Entity.IsDormant(enemy) and Entity.GetHealth(enemy) > 0 then
+			if Menu.GetValue(BountyHunter.AutoTrackStyleValues) == 0 then
+			    Ability.CastTarget(Track, enemy)
+			    Ability.CastNoTarget(WindWalk) return
+	        else
+			    Ability.CastTarget(Track, enemy) return 
+			    end
+			end  
+		end 
+	end
 end
 			
 function BountyHunter.ScrollTPCancel()
@@ -502,16 +500,6 @@ if not Menu.IsEnabled(BountyHunter.optionEnable) then return end
 				Ability.CastNoTarget(WindWalk) return end
 					end
 				end
-			end
-				
-			if Ability.IsReady(Track) and Ability.IsReady(WindWalk) and NPC.GetMana(myHero) > Ability.GetManaCost(WindWalk) + Ability.GetManaCost(Track) and NPC.IsEntityInRange(enemy, myHero, TrackRange) and not NPC.HasModifier(enemy, "modifier_bounty_hunter_track") and not NPC.HasModifier(myHero, "modifier_wind_walk") and not NPC.IsLinkensProtected(enemy) then
-				Ability.CastTarget(Track, enemy) return end
-					
-			if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and not NPC.IsLinkensProtected(enemy) and Ability.SecondsSinceLastUse(Track)<=1 and Ability.SecondsSinceLastUse(Track)>0 then
-				Ability.CastNoTarget(WindWalk) return end
-			
-			if Ability.IsReady(Shuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not NPC.IsLinkensProtected(enemy) and NPC.HasModifier(enemy, "modifier_teleporting") then 
-				Ability.CastTarget(Shuriken, enemy) return 
 			end
 		end
 	end
