@@ -559,7 +559,6 @@ if not Menu.IsKeyDown(BountyHunter.optionKey) then return end
   	local TrackRange = Ability.GetCastRange(Track)
   	
   	--Item Ranges--
-  	local AbyssalRange = 140
   	local EBladeRange = 800
   	local HalberdRange = 600
   	local MedallionRange = 1000
@@ -575,7 +574,6 @@ if not Menu.IsKeyDown(BountyHunter.optionKey) then return end
   	if Lens then
     	ShurikenRange = ShurikenRange + 250
     	TrackRange = TrackRange + 250
-    	AbyssalRange = AbyssalRange + 250
     	DagonRange = DagonRange +250
     	EBladeRange = EBladeRange + 250
     	HalberdRange = HalberdRange + 250
@@ -591,75 +589,78 @@ if not Menu.IsKeyDown(BountyHunter.optionKey) then return end
 	
 	if enemy and Menu.IsEnabled(BountyHunter.optionEnable) then
 		     
-	if Ability.IsReady(WindWalk) and Menu.IsEnabled(BountyHunter.optionEnableWind) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") then
+	if Ability.IsReady(WindWalk) and Menu.IsEnabled(BountyHunter.optionEnableWind) and Ability.IsCastable(WindWalk, mana) and not NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVISIBLE) then
 	Ability.CastNoTarget(WindWalk) return 
 	end
 	
 	if not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active")
-	and NPC.IsAttacking(myHero) and Track and Menu.IsEnabled(BountyHunter.optionEnableTrack) and Ability.IsCastable(Track, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), TrackRange) and not NPC.HasModifier(enemy, "modifier_bounty_hunter_track") then Ability.CastTarget(Track, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	and NPC.IsAttacking(myHero) and Track and Menu.IsEnabled(BountyHunter.optionEnableTrack) and Ability.IsCastable(Track, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), TrackRange) and not NPC.HasModifier(myHero, "modifier_wind_walk") and not NPC.HasModifier(enemy, "modifier_bounty_hunter_track") then Ability.CastTarget(Track, enemy) return 
 	end
 	
 	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.IsLinkensProtected(enemy)
-	and NPC.IsAttacking(myHero) and Orchid and Menu.IsEnabled(BountyHunter.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), OrchidRange) and not NPC.HasModifier(enemy, "modifier_orchid_malevolence_debuff") and not NPC.HasModifier(enemy, "modifier_orchid_malevolence_debuff") then Ability.CastTarget(Orchid, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	and NPC.IsAttacking(myHero) and Orchid and Menu.IsEnabled(BountyHunter.optionEnableOrchid) and Ability.IsCastable(Orchid, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), OrchidRange) and not NPC.HasModifier(enemy, "modifier_orchid_malevolence_debuff") and not NPC.HasModifier(enemy, "modifier_orchid_malevolence_debuff") and not NPC.HasModifier(myHero, "modifier_wind_walk") then Ability.CastTarget(Orchid, enemy) return 
 	end
 	
 	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.IsLinkensProtected(enemy)
-	and NPC.IsAttacking(myHero) and Thorn and Menu.IsEnabled(BountyHunter.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ThornRange) and not NPC.HasModifier(enemy, "modifier_orchid_malevolence_debuff") and not NPC.HasModifier(enemy, "modifier_bloodthorn_debuff") then Ability.CastTarget(Thorn, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	and NPC.IsAttacking(myHero) and Thorn and Menu.IsEnabled(BountyHunter.optionEnableThorn) and Ability.IsCastable(Thorn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ThornRange) and not NPC.HasModifier(enemy, "modifier_orchid_malevolence_debuff") and not NPC.HasModifier(enemy, "modifier_bloodthorn_debuff") and not NPC.HasModifier(myHero, "modifier_wind_walk") then Ability.CastTarget(Thorn, enemy) return 
 	end
 	
 	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.IsLinkensProtected(enemy)
-	and NPC.IsAttacking(myHero) and Scythe and Menu.IsEnabled(BountyHunter.optionEnableScythe) and Ability.IsCastable(Scythe, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ScytheRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) then Ability.CastTarget(Scythe, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	and NPC.IsAttacking(myHero) and Scythe and Menu.IsEnabled(BountyHunter.optionEnableScythe) and Ability.IsCastable(Scythe, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ScytheRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.HasModifier(myHero, "modifier_wind_walk") then Ability.CastTarget(Scythe, enemy) return 
 	end
 	
 	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active")
-	and NPC.IsAttacking(myHero) and Butterfly and Menu.IsEnabled(BountyHunter.optionEnableButterfly) and Ability.IsReady(Butterfly) and NPC.IsEntityInRange(myHero, enemy, NPC.GetAttackRange(myHero)) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_ROOTED) and not NPC.IsStunned(enemy) then Ability.CastNoTarget(Butterfly) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	and NPC.IsAttacking(myHero) and Butterfly and Menu.IsEnabled(BountyHunter.optionEnableButterfly) and Ability.IsReady(Butterfly) and NPC.IsEntityInRange(myHero, enemy, NPC.GetAttackRange(myHero)) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_ROOTED) and not NPC.HasModifier(myHero, "modifier_wind_walk") and not NPC.IsStunned(enemy) then Ability.CastNoTarget(Butterfly) return 
 	end
 	
 	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsLinkensProtected(enemy)
-	and NPC.IsAttacking(myHero) and EBlade and Menu.IsEnabled(BountyHunter.optionEnableEBlade) and Ability.IsCastable(EBlade, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), EBladeRange) and not NPC.HasModifier(enemy, "modifier_sheepstick_debuff") then Ability.CastTarget(EBlade, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	and NPC.IsAttacking(myHero) and EBlade and Menu.IsEnabled(BountyHunter.optionEnableEBlade) and Ability.IsCastable(EBlade, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), EBladeRange) and not NPC.HasModifier(enemy, "modifier_sheepstick_debuff") and not NPC.HasModifier(myHero, "modifier_wind_walk") then Ability.CastTarget(EBlade, enemy) return 
 	end
 	
 	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsLinkensProtected(enemy)
-	and Dagon and Menu.IsEnabled(BountyHunter.optionEnableDagon) and Menu.IsEnabled(BountyHunter.optionEnableEBlade) and Ability.IsCastable(Dagon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), EBladeRange) and not NPC.HasModifier(enemy, "modifier_sheepstick_debuff") and NPC.HasModifier(enemy, "modifier_item_ethereal_blade_ethereal") then Ability.CastTarget(Dagon, enemy) Ability.CastTarget(Shuriken, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	and Dagon and Menu.IsEnabled(BountyHunter.optionEnableDagon) and Menu.IsEnabled(BountyHunter.optionEnableEBlade) and Ability.IsCastable(Dagon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), EBladeRange) and not NPC.HasModifier(enemy, "modifier_sheepstick_debuff") and NPC.HasModifier(enemy, "modifier_item_ethereal_blade_ethereal") and not NPC.HasModifier(myHero, "modifier_wind_walk") then Ability.CastTarget(Dagon, enemy) Ability.CastTarget(Shuriken, enemy) return 
 	end
 	
-	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsLinkensProtected(enemy)
-	and NPC.IsAttacking(myHero) and Dagon and Menu.IsEnabled(BountyHunter.optionEnableDagon) and not Menu.IsEnabled(BountyHunter.optionEnableEBlade) and Ability.IsCastable(Dagon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Utility.GetCastRange(myHero, Dagon)) then Ability.CastTarget(Dagon, enemy) Ability.CastTarget(Shuriken, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsLinkensProtected(enemy) and not NPC.HasModifier(myHero, "modifier_wind_walk")
+	and NPC.IsAttacking(myHero) and Dagon and Menu.IsEnabled(BountyHunter.optionEnableDagon) and not Menu.IsEnabled(BountyHunter.optionEnableEBlade) and Ability.IsCastable(Dagon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Utility.GetCastRange(myHero, Dagon)) then Ability.CastTarget(Dagon, enemy) Ability.CastTarget(Shuriken, enemy) return 
 	end
 	
-	if not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active")
-	and NPC.IsAttacking(myHero) and Abyssal and Menu.IsEnabled(BountyHunter.optionEnableAbyssal) and Ability.IsCastable(Abyssal, mana) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.IsStunned(enemy) then Ability.CastTarget(Abyssal, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	if not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(myHero, "modifier_wind_walk")
+	and NPC.IsAttacking(myHero) and Abyssal and Menu.IsEnabled(BountyHunter.optionEnableAbyssal) and Ability.IsCastable(Abyssal, mana) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.IsStunned(enemy) then Ability.CastTarget(Abyssal, enemy) return 
 	end
 	
-	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE)
-	and NPC.IsAttacking(myHero) and Urn and Menu.IsEnabled(BountyHunter.optionEnableUrn) and Ability.IsCastable(Urn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), UrnRange) and Item.GetCurrentCharges(Urn) > 0 and not NPC.HasModifier(enemy, "modifier_item_urn_damage") then Ability.CastTarget(Urn, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(myHero, "modifier_wind_walk")
+	and NPC.IsAttacking(myHero) and Urn and Menu.IsEnabled(BountyHunter.optionEnableUrn) and Ability.IsCastable(Urn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), UrnRange) and Item.GetCurrentCharges(Urn) > 0 and not NPC.HasModifier(enemy, "modifier_item_urn_damage") then Ability.CastTarget(Urn, enemy) return 
 	end
 	
-	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE)
-	and NPC.IsAttacking(myHero) and Vessel and Menu.IsEnabled(BountyHunter.optionEnableVessel) and Ability.IsCastable(Vessel, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), VesselRange) and Item.GetCurrentCharges(Vessel) > 0 and not NPC.HasModifier(enemy, "modifier_item_spirit_vessel_damage") then Ability.CastTarget(Vessel, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return
+	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(myHero, "modifier_wind_walk") 
+	and NPC.IsAttacking(myHero) and Vessel and Menu.IsEnabled(BountyHunter.optionEnableVessel) and Ability.IsCastable(Vessel, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), VesselRange) and Item.GetCurrentCharges(Vessel) > 0 and not NPC.HasModifier(enemy, "modifier_item_spirit_vessel_damage") then Ability.CastTarget(Vessel, enemy) return
 	end
 	
-	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE)
-	and NPC.IsAttacking(myHero) and Medallion and Menu.IsEnabled(BountyHunter.optionEnableMedallion) and Ability.IsCastable(Medallion, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), MedallionRange) and not NPC.HasModifier(enemy, "modifier_item_medallion_of_courage_armor_reduction") then Ability.CastTarget(Medallion, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(myHero, "modifier_wind_walk")
+	and NPC.IsAttacking(myHero) and Medallion and Menu.IsEnabled(BountyHunter.optionEnableMedallion) and Ability.IsCastable(Medallion, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), MedallionRange) and not NPC.HasModifier(enemy, "modifier_item_medallion_of_courage_armor_reduction") then Ability.CastTarget(Medallion, enemy) return 
 	end
 	
-	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE)
-	and NPC.IsAttacking(myHero) and SolarCrest and Menu.IsEnabled(BountyHunter.optionEnableSolarCrest) and Ability.IsCastable(SolarCrest, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), SolarCrestRange) and not NPC.HasModifier(enemy, "modifier_item_solar_crest_armor_reduction") then Ability.CastTarget(SolarCrest, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(myHero, "modifier_wind_walk")
+	and NPC.IsAttacking(myHero) and SolarCrest and Menu.IsEnabled(BountyHunter.optionEnableSolarCrest) and Ability.IsCastable(SolarCrest, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), SolarCrestRange) and not NPC.HasModifier(enemy, "modifier_item_solar_crest_armor_reduction") then Ability.CastTarget(SolarCrest, enemy) return 
 	end
 	
-	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active")
-	and NPC.IsAttacking(myHero) and Halberd and Menu.IsEnabled(BountyHunter.optionEnableHalberd) and Ability.IsCastable(Halberd, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), HalberdRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_DISARMED) then Ability.CastTarget(Halberd, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(myHero, "modifier_wind_walk")
+	and NPC.IsAttacking(myHero) and Halberd and Menu.IsEnabled(BountyHunter.optionEnableHalberd) and Ability.IsCastable(Halberd, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), HalberdRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_DISARMED) then Ability.CastTarget(Halberd, enemy) return 
 	end
 	
-	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active")
-	and NPC.IsAttacking(myHero) and Shuriken and Menu.IsEnabled(BountyHunter.optionEnableShuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.IsStunned(enemy) then Ability.CastTarget(Shuriken, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(myHero, "modifier_wind_walk")
+	and NPC.IsAttacking(myHero) and Shuriken and Menu.IsEnabled(BountyHunter.optionEnableShuriken) and Ability.IsCastable(Shuriken, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ShurikenRange) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.HasModifier(myHero, "modifier_wind_walk") and not NPC.IsStunned(enemy) then Ability.CastTarget(Shuriken, enemy) return 
 	end
 	
-	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active")
-	and NPC.IsAttacking(myHero) and Nullifier and Menu.IsEnabled(BountyHunter.optionEnableNullifier) and Ability.IsCastable(Nullifier, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), NullifierRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.IsSilenced(enemy) then Ability.CastTarget(Nullifier, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(myHero, "modifier_wind_walk")
+	and NPC.IsAttacking(myHero) and Nullifier and Menu.IsEnabled(BountyHunter.optionEnableNullifier) and Ability.IsCastable(Nullifier, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), NullifierRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.IsSilenced(enemy) then Ability.CastTarget(Nullifier, enemy) return 
 	end
 	
-	BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return
+	if enemy and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), 300) then BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return
+	end
+	
+	if enemy and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), 300) then BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION", enemy, mousePos, nil) return end
 	end
 end
 
