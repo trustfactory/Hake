@@ -354,20 +354,25 @@ function BountyHunter.AutoTrackInvis()
     	TrackRange = TrackRange + 250
     end
 
-    if Menu.IsEnabled(BountyHunter.optionEnable) then
-
-	for i = 1, Heroes.Count() do
+    for i = 1, Heroes.Count() do
 		local enemy = Heroes.Get(i)
-			if Menu.IsEnabled(BountyHunter.InvisAfterTrack) and enemy and Entity.IsHero(enemy) and not Entity.IsSameTeam(myHero, enemy) then
-				if Ability.IsReady(Track) and Ability.IsReady(WindWalk) and NPC.GetMana(myHero) > Ability.GetManaCost(WindWalk) + Ability.GetManaCost(Track) and NPC.IsEntityInRange(enemy, myHero, TrackRange) and not NPC.HasModifier(enemy, "modifier_bounty_hunter_track") and not NPC.HasModifier(myHero, "modifier_wind_walk") and not NPC.IsLinkensProtected(enemy) then
-					Ability.CastTarget(Track, enemy) return end
-					
-				if Ability.IsReady(WindWalk) and Ability.IsCastable(WindWalk, mana) and not NPC.HasModifier(myHero, "modifier_wind_walk") and not NPC.IsLinkensProtected(enemy) and Ability.SecondsSinceLastUse(Track)<=1 and Ability.SecondsSinceLastUse(Track)>0 then
+		local sameTeam = Entity.GetTeamNum(enemy) == myTeam
+		if not sameTeam and not Entity.IsDormant(enemy) and Entity.GetHealth(enemy) > 0 then
+			local pos = Entity.GetAbsOrigin(enemy)
+			if Menu.IsEnabled(BountyHunter.InvisAfterTrack) then
+				if Ability.IsReady(Track) and Ability.IsReady(WindWalk) and NPC.GetMana(myHero) > Ability.GetManaCost(WindWalk) + Ability.GetManaCost(Track) and NPC.IsEntityInRange(enemy, myHero, TrackRange) and not NPC.HasModifier(enemy, "modifier_bounty_hunter_track") and not NPC.IsLinkensProtected(enemy) then
+					Ability.CastTarget(Track, enemy)
 					Ability.CastNoTarget(WindWalk) return
 				end
 			end
+			
+			else
+			    
+			if not Menu.IsEnabled(BountyHunter.InvisAfterTrack) then
+				Ability.CastTarget(Track, hero) return
+			end
 		end
-	end
+    end
 end
 			
 function BountyHunter.ScrollTPCancel()
@@ -548,13 +553,18 @@ if not Menu.IsKeyDown(BountyHunter.optionKey) then return end
 	local Urn = NPC.GetItem(myHero, "item_urn_of_shadows", true)
     local Vessel = NPC.GetItem(myHero, "item_spirit_vessel", true)
     
-    local Dagon = NPC.GetItem(myHero, "item_dagon", true)
-        if not Dagon then
-	        for i = 2, 5 do
-		    Dagon = NPC.GetItem(myHero, "item_dagon_" .. i, true)
-		    if Dagon then break end
-	    end
-    end
+    local Dagon
+    local Dagon1 = NPC.GetItem(myHero, "item_dagon", true)
+    local Dagon2 = NPC.GetItem(myHero, "item_dagon_2", true)
+    local Dagon3 = NPC.GetItem(myHero, "item_dagon_3", true)
+    local Dagon4 = NPC.GetItem(myHero, "item_dagon_4", true)
+    local Dagon5 = NPC.GetItem(myHero, "item_dagon_5", true)
+
+    if Dagon1 and Ability.IsCastable(Dagon1, mana) then Dagon = Dagon1 end
+    if Dagon2 and Ability.IsCastable(Dagon2, mana) then Dagon = Dagon2 end
+    if Dagon3 and Ability.IsCastable(Dagon3, mana) then Dagon = Dagon3 end
+    if Dagon4 and Ability.IsCastable(Dagon4, mana) then Dagon = Dagon4 end
+    if Dagon5 and Ability.IsCastable(Dagon5, mana) then Dagon = Dagon5 end
 	
 	--Ability Ranges--
     local ShurikenRange = Ability.GetCastRange(Shuriken)
@@ -562,7 +572,6 @@ if not Menu.IsKeyDown(BountyHunter.optionKey) then return end
   	
   	--Item Ranges--
   	local AbyssalRange = 140
-  	local DagonRange = Ability.GetCastRange(Dagon)
   	local EBladeRange = 800
   	local HalberdRange = 600
   	local MedallionRange = 1000
@@ -627,7 +636,7 @@ if not Menu.IsKeyDown(BountyHunter.optionKey) then return end
 	end
 	
 	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsLinkensProtected(enemy)
-	and NPC.IsAttacking(myHero) and Dagon and Menu.IsEnabled(BountyHunter.optionEnableDagon) and not Menu.IsEnabled(BountyHunter.optionEnableEBlade) and Ability.IsCastable(Dagon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DagonRange) then Ability.CastTarget(Dagon, enemy) Ability.CastTarget(Shuriken, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
+	and NPC.IsAttacking(myHero) and Dagon and Menu.IsEnabled(BountyHunter.optionEnableDagon) and not Menu.IsEnabled(BountyHunter.optionEnableEBlade) and Ability.IsCastable(Dagon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), Utility.GetCastRange(myHero, Dagon)) then Ability.CastTarget(Dagon, enemy) Ability.CastTarget(Shuriken, enemy) BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return 
 	end
 	
 	if not Entity.IsDormant(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active")
