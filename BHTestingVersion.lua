@@ -657,10 +657,10 @@ if not Menu.IsKeyDown(BountyHunter.optionKey) then return end
 	and NPC.IsAttacking(myHero) and Nullifier and Menu.IsEnabled(BountyHunter.optionEnableNullifier) and Ability.IsCastable(Nullifier, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), NullifierRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.IsSilenced(enemy) then Ability.CastTarget(Nullifier, enemy) return 
 	end
 	
-	if enemy and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), 300) then BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return
+	if enemy and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), 200) then BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return
 	end
 	
-	if enemy and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), 300) then BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION", enemy, mousePos, nil) return end
+	if enemy and not NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), 200) then BountyHunter.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION", enemy, mousePos, nil) return end
 	end
 end
 
