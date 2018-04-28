@@ -32,9 +32,10 @@ function Silencer.AutoSilence(myHero)
 			if Entity.IsAlive(enemy) then
 				local blackHole = NPC.GetAbility(enemy, "enigma_black_hole")
 				
-				if blackHole and Ability.IsChannelling(blackHole) then
+				if blackHole and Ability.IsInAbilityPhase(blackHole) or Ability.IsChannelling(blackHole) then
+					if Ability.IsReady(Silence) and not NPC.IsLinkensProtected(enemy) then 
 					Ability.CastNoTarget(Silence)
-					return
+					return end
 				end
 			end
 		end
@@ -44,8 +45,9 @@ function Silencer.AutoSilence(myHero)
 				local epicenter = NPC.GetAbility(enemy, "sandking_epicenter")
 				
 				if epicenter and Ability.IsChannelling(epicenter) then
-					Ability.CastNoTarget(Silence)
-					return
+					if Ability.IsReady(Silence) and not NPC.IsLinkensProtected(enemy) then 
+					Ability.CastNoTarget(Silence) 
+					return end
 				end
 			end
 		end
@@ -54,9 +56,10 @@ function Silencer.AutoSilence(myHero)
 			if Entity.IsAlive(enemy) then
 				local deathward = NPC.GetAbility(enemy, "witch_doctor_death_ward")
 				
-				if deathward and Ability.IsChannelling(deathward) then
-					Ability.CastNoTarget(Silence)
-					return
+				if deathward and Ability.IsInAbilityPhase(deathward) or Ability.IsChannelling(deathward) then
+					if Ability.IsReady(Silence) and not NPC.IsLinkensProtected(enemy) then 
+					Ability.CastNoTarget(Silence) 
+					return end
 				end
 			end
 		end
@@ -65,9 +68,10 @@ function Silencer.AutoSilence(myHero)
 			if Entity.IsAlive(enemy) then
 				local freezing = NPC.GetAbility(enemy, "crystal_maiden_freezing_field")
 				
-				if freezing and Ability.IsChannelling(freezing) then
-					Ability.CastNoTarget(Silence)
-					return
+				if freezing and Ability.IsInAbilityPhase(freezing) or Ability.IsChannelling(freezing) then
+					if Ability.IsReady(Silence) and not NPC.IsLinkensProtected(enemy) then 
+					Ability.CastNoTarget(Silence) 
+					return end
 				end
 			end
 		end
@@ -76,9 +80,10 @@ function Silencer.AutoSilence(myHero)
 			if Entity.IsAlive(enemy) then
 				local grip = NPC.GetAbility(enemy, "bane_fiends_grip")
 				
-				if grip and Ability.IsChannelling(grip) then
-					Ability.CastNoTarget(Silence)
-					return
+				if grip and Ability.IsInAbilityPhase(grip) or Ability.IsChannelling(grip) then
+					if Ability.IsReady(Silence) and not NPC.IsLinkensProtected(enemy) then 
+					Ability.CastNoTarget(Silence) 
+					return end
 				end
 			end
 		end
