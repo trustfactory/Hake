@@ -5,9 +5,11 @@ Oracle.optionKey2 = Menu.AddKeyOption({"Hero Specific","Oracle"}, "3. Ult Healin
 Oracle.optionEnable = Menu.AddOption({"Hero Specific","Oracle"}, "1. Enabled", "Enable Or Disable Oracle Combo Script")
 --Items Toggle Menu--
 Oracle.optionEnableBottle = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"1. Use Bottle on Target During Ult","Turn On/Off Bottle in Ult Combo")
-Oracle.optionEnableSalve = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"2. Use Salve on Target During Ult","Turn On/Off Salve in Ult Combo")
-Oracle.optionEnableUrn = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"3. Use Urn on Target During Ult","Turn On/Off Urn in Ult Combo")
-Oracle.optionEnableVessel = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"4. Use Vessel on Target During Ult","Turn On/Off Vessel in Ult Combo")
+Oracle.optionEnableGreaves = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"2. Use Greaves on Target During Ult","Turn On/Off Greaves in Ult Combo")
+Oracle.optionEnableMekansm = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"3. Use Mekansm on Target During Ult","Turn On/Off Mekansm in Ult Combo")
+Oracle.optionEnableSalve = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"4. Use Salve on Target During Ult","Turn On/Off Salve in Ult Combo")
+Oracle.optionEnableUrn = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"5. Use Urn on Target During Ult","Turn On/Off Urn in Ult Combo")
+Oracle.optionEnableVessel = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"6. Use Vessel on Target During Ult","Turn On/Off Vessel in Ult Combo")
 
 function Oracle.OnUpdate()
     if not Menu.IsEnabled(Oracle.optionEnable) then return true end
@@ -83,6 +85,8 @@ if not Menu.IsKeyDown(Oracle.optionKey2) then return end
     --Item Calls--
     local Lens = NPC.GetItem(myHero, "item_aether_lens", true)
     local Bottle = NPC.GetItem(myHero, "item_bottle", true)
+    local Greaves = NPC.GetItem(myHero, "item_guardian_greaves", true)
+    local Mekansm = NPC.GetItem(myHero, "item_mekansm", true)
     local Salve = NPC.GetItem(myHero, "item_flask", true)
     local Urn = NPC.GetItem(myHero, "item_urn_of_shadows", true)
     local Vessel = NPC.GetItem(myHero, "item_spirit_vessel", true)
@@ -93,6 +97,8 @@ if not Menu.IsKeyDown(Oracle.optionKey2) then return end
   	
   	--Item Ranges--
   	local BottleRange = 350
+  	local GreavesRange = 900
+  	local MekansmRange = 900
   	local SalveRange = 250
   	local UrnRange = 950
   	local VesselRange = 950
@@ -143,6 +149,12 @@ if not Menu.IsKeyDown(Oracle.optionKey2) then return end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 	and Vessel and Menu.IsEnabled(Oracle.optionEnableVessel) and Ability.IsCastable(Vessel, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), VesselRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Vessel) > 0 and not NPC.HasModifier(hero, "modifier_item_spirit_vessel_heal") then Ability.CastTarget(Vessel, hero) return end
+	
+	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
+	and Greaves and Menu.IsEnabled(Oracle.optionEnableGreaves) and Ability.IsCastable(Greaves, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), GreavesRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastNoTarget(Greaves) return end
+	
+	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
+	and Mekansm and Menu.IsEnabled(Oracle.optionEnableMekansm) and Ability.IsCastable(Mekansm, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), MekansmRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastNoTarget(Mekansm) return end
 			     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 	and Flames and Ability.IsCastable(Flames, mana) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastTarget(Flames, hero) return end
