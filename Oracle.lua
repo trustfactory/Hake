@@ -1,8 +1,8 @@
 local Oracle = {}
 
+Oracle.optionEnable = Menu.AddOption({"Hero Specific","Oracle"}, "1. Enabled", "Enable Or Disable Oracle Combo Script")
 Oracle.optionKey = Menu.AddKeyOption({"Hero Specific","Oracle"}, "2. Non-Ult Healing Key", Enum.ButtonCode.KEY_D)
 Oracle.optionKey2 = Menu.AddKeyOption({"Hero Specific","Oracle"}, "3. Ult Healing Key", Enum.ButtonCode.KEY_F)
-Oracle.optionEnable = Menu.AddOption({"Hero Specific","Oracle"}, "1. Enabled", "Enable Or Disable Oracle Combo Script")
 --Items Toggle Menu--
 Oracle.optionEnableBottle = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"1. Use Bottle on Target During Ult","Turn On/Off Bottle in Ult Combo")
 Oracle.optionEnableGreaves = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"2. Use Greaves on Target During Ult","Turn On/Off Greaves in Ult Combo")
@@ -60,11 +60,11 @@ if not Menu.IsKeyDown(Oracle.optionKey) then return end
 	if Menu.IsEnabled(Oracle.optionEnable) then
 		     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Edict and Ability.IsCastable(Edict, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), EdictRange) then Ability.CastTarget(Edict, hero) return 
+	and Edict and Ability.IsCastable(Edict, mana) and Ability.IsReady(Edict) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), EdictRange) then Ability.CastTarget(Edict, hero) return 
 	end
 			     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Flames and Ability.IsCastable(Flames, mana) and NPC.HasModifier(hero, "modifier_oracle_fates_edict") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), FlamesRange) then Ability.CastTarget(Flames, hero) return end
+	and Flames and Ability.IsCastable(Flames, mana) and Ability.IsReady(Flames) and NPC.HasModifier(hero, "modifier_oracle_fates_edict") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), EdictRange) then Ability.CastTarget(Flames, hero) return end
 	end
 	Player.PrepareUnitOrders(Players.GetLocal(), 4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) 
 end
@@ -136,7 +136,7 @@ if not Menu.IsKeyDown(Oracle.optionKey2) then return end
 	if Menu.IsEnabled(Oracle.optionEnable) then
 		     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Promise and Ability.IsCastable(Promise, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), PromiseRange) then Ability.CastTarget(Promise, hero) return end
+	and Promise and Ability.IsCastable(Promise, mana) and Ability.IsReady(Promise) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), PromiseRange) then Ability.CastTarget(Promise, hero) return end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 	and Bottle and Menu.IsEnabled(Oracle.optionEnableBottle) and Ability.IsReady(Bottle) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), BottleRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Bottle) > 0 and not NPC.HasModifier(hero, "modifier_bottle_regeneration") then Ability.CastTarget(Bottle, hero) return end
@@ -145,19 +145,19 @@ if not Menu.IsKeyDown(Oracle.optionKey2) then return end
 	and Salve and Menu.IsEnabled(Oracle.optionEnableSalve) and Ability.IsReady(Salve) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), SalveRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and not NPC.HasModifier(hero, "modifier_flask_healing") then Ability.CastTarget(Salve, hero) return end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Urn and Menu.IsEnabled(Oracle.optionEnableUrn) and Ability.IsCastable(Urn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), UrnRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Urn) > 0 and not NPC.HasModifier(hero, "modifier_item_urn_heal") then Ability.CastTarget(Urn, hero) return end
+	and Urn and Menu.IsEnabled(Oracle.optionEnableUrn) and Ability.IsReady(Urn) and Ability.IsCastable(Urn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), UrnRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Urn) > 0 and not NPC.HasModifier(hero, "modifier_item_urn_heal") then Ability.CastTarget(Urn, hero) return end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Vessel and Menu.IsEnabled(Oracle.optionEnableVessel) and Ability.IsCastable(Vessel, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), VesselRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Vessel) > 0 and not NPC.HasModifier(hero, "modifier_item_spirit_vessel_heal") then Ability.CastTarget(Vessel, hero) return end
+	and Vessel and Menu.IsEnabled(Oracle.optionEnableVessel) and Ability.IsReady(Vessel) and Ability.IsCastable(Vessel, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), VesselRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") and Item.GetCurrentCharges(Vessel) > 0 and not NPC.HasModifier(hero, "modifier_item_spirit_vessel_heal") then Ability.CastTarget(Vessel, hero) return end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Greaves and Menu.IsEnabled(Oracle.optionEnableGreaves) and Ability.IsCastable(Greaves, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), GreavesRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastNoTarget(Greaves) return end
+	and Greaves and Menu.IsEnabled(Oracle.optionEnableGreaves) and Ability.IsReady(Greaves) and Ability.IsCastable(Greaves, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), GreavesRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastNoTarget(Greaves) return end
 	
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Mekansm and Menu.IsEnabled(Oracle.optionEnableMekansm) and Ability.IsCastable(Mekansm, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), MekansmRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastNoTarget(Mekansm) return end
+	and Mekansm and Menu.IsEnabled(Oracle.optionEnableMekansm) and Ability.IsReady(Mekansm) and Ability.IsCastable(Mekansm, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), MekansmRange) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastNoTarget(Mekansm) return end
 			     
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
-	and Flames and Ability.IsCastable(Flames, mana) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastTarget(Flames, hero) return end
+	and Flames and Ability.IsCastable(Flames, mana) and Ability.IsReady(Flames) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastTarget(Flames, hero) return end
 	end
 	Player.PrepareUnitOrders(Players.GetLocal(), 4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
 end
