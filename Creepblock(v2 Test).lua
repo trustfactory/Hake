@@ -109,7 +109,7 @@ function CreepBlocker.OnDraw()
         -- if curtime > last_stop and dist >= 15 * speed / 315 and dist <= 150 * speed / 315 then
         if curtime > CreepBlocker.last_stop and dist >= 10 and dist <= 150 then
             if CreepBlocker.less_stopping then
-                CreepBlocker.last_stop = curtime + 1.2 * 315 / speed
+                CreepBlocker.last_stop = curtime + 1.05 * 315 / speed
             elseif not CreepBlocker.less_stopping then
                 if  NPC.GetUnitName(myHero) == "npc_dota_hero_skywrath_mage" then
                     CreepBlocker.last_stop = curtime + 0.35 * 315 / speed
