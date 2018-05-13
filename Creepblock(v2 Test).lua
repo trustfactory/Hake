@@ -122,7 +122,7 @@ function CreepBlocker.OnDraw()
             -- else
             --     sleep = curtime + 0.07
             -- end
-            CreepBlocker.sleep = curtime + 0.07 * 315 / speed
+            CreepBlocker.sleep = curtime + 0.05 * 315 / speed
             Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_STOP, myHero, best_position, nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_HERO_ONLY)
         end
     end
