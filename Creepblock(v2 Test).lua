@@ -6,6 +6,23 @@ CreepBlocker.key = Menu.AddKeyOption({"Utility"}, "[Bot] CreepBlock", Enum.Butto
 CreepBlocker.skipRangedCreep = Menu.AddOption({ "Utility", "[Bot] Skip ranged creep" }, "Enabled", "Bot will try to skip ranged creep.")
 CreepBlocker.font = Renderer.LoadFont("Tahoma", 20, Enum.FontWeight.EXTRABOLD)
 
+CreepBlocker.fasterhero = {
+    "npc_dota_hero_enchantress",
+    "npc_dota_hero_keeper_of_the_light",
+    "npc_dota_hero_pugna",
+    "npc_dota_hero_leshrac",
+    "npc_dota_hero_luna",
+    "npc_dota_hero_skywrath_mage"
+}
+
+function GetUnitName(fasterhero)
+    for i, fasterhero in pairs(CreepBlocker.fasterhero) do
+        if NPC.GetUnitName(Heroes.GetLocal()) == fasterhero then
+            return true
+        end
+    end
+end
+
 function CreepBlocker.OnGameStart()
 	CreepBlocker.init()
 end
@@ -109,10 +126,14 @@ function CreepBlocker.OnDraw()
         -- if curtime > last_stop and dist >= 15 * speed / 315 and dist <= 150 * speed / 315 then
         if curtime > CreepBlocker.last_stop and dist >= 10 and dist <= 150 then
             if CreepBlocker.less_stopping then
-                CreepBlocker.last_stop = curtime + 1.05 * 315 / speed
+                if  GetUnitName(fasterhero) then
+                    CreepBlocker.last_stop = curtime + 0.7 * 315 / speed
+                else
+                    CreepBlocker.last_stop = curtime + 1.2 * 315 / speed
+                end
             elseif not CreepBlocker.less_stopping then
-                if  NPC.GetUnitName(myHero) == "npc_dota_hero_skywrath_mage" then
-                    CreepBlocker.last_stop = curtime + 0.35 * 315 / speed
+                if  GetUnitName(fasterhero) then
+                    CreepBlocker.last_stop = curtime + 0.45 * 315 / speed
                 else
                     CreepBlocker.last_stop = curtime + 0.9 * 315 / speed
                 end
@@ -129,7 +150,7 @@ function CreepBlocker.OnDraw()
 
     -- get my line and towers
     CreepBlocker.less_stopping = false
-    local TOWER_WARNING = 350
+    local TOWER_WARNING = 315
     for i, tower in pairs(CreepBlocker.top_towers) do
         local torigin = Entity.GetAbsOrigin(tower)
         if Entity.IsNPC(tower) and (origin - torigin):Length() <= TOWER_WARNING then
