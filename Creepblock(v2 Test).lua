@@ -73,7 +73,7 @@ function CreepBlocker.OnDraw()
     local hx, hy = Renderer.WorldToScreen(origin)
     if CreepBlocker.less_stopping then
         Renderer.SetDrawColor(255, 0, 0, 255)
-        Renderer.DrawText(CreepBlocker.font, hx, hy, 'HOLD KEY DRINK COFFEE', 1)
+        Renderer.DrawText(CreepBlocker.font, hx, hy, 'BOT IN LEARNING MODE', 1)
     end
 
     for i, npc in ipairs(creeps) do
@@ -91,7 +91,7 @@ function CreepBlocker.OnDraw()
 
             local angle = math.atan(y - hy, x - hx)
             Renderer.SetDrawColor(255, 0, 0, 255)
-            Renderer.DrawText(CreepBlocker.font, hx, hy, 'HOLD KEY DRINK COFFEE', 1)
+            Renderer.DrawText(CreepBlocker.font, hx, hy, 'BOT IN LEARNING MODE', 1)
 
             local moves_to = CreepBlocker.GetPredictedPosition(npc, 0.68)
 
