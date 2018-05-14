@@ -4,7 +4,7 @@ CreepBlocker.creep_melee_collision_size = 16
 CreepBlocker.key = Menu.AddKeyOption({"Utility"}, "[Bot] CreepBlock", Enum.ButtonCode.KEY_SPACE)
 -- local enemyHeroBlock = Menu.AddOption({ "Utility", "[Bot] HeroBlock" }, "Enabled", "Block enemy hero with summoned units.")
 CreepBlocker.skipRangedCreep = Menu.AddOption({ "Utility", "[Bot] Skip ranged creep" }, "Enabled", "Bot will try to skip ranged creep.")
-CreepBlocker.font = Renderer.LoadFont("Tahoma", 20, Enum.FontWeight.EXTRABOLD)
+CreepBlocker.font = Renderer.LoadFont("Elephant", 20, Enum.FontWeight.EXTRABOLD)
 
 CreepBlocker.fasterhero = {
     "npc_dota_hero_enchantress",
@@ -72,8 +72,8 @@ function CreepBlocker.OnDraw()
 
     local hx, hy = Renderer.WorldToScreen(origin)
     if CreepBlocker.less_stopping then
-        Renderer.SetDrawColor(0, 255, 255, 150)
-        Renderer.DrawText(CreepBlocker.font, hx, hy, 'LESS STOPPING (TOWER NEAR)', 1)
+        Renderer.SetDrawColor(255, 0, 0, 255)
+        Renderer.DrawText(CreepBlocker.font, hx, hy, 'HOLD KEY DRINK COFFEE', 1)
     end
 
     for i, npc in ipairs(creeps) do
@@ -89,11 +89,11 @@ function CreepBlocker.OnDraw()
             local x, y = Renderer.WorldToScreen(creep_origin)
             CreepBlocker.DrawCircle(creep_origin, CreepBlocker.creep_melee_collision_size)
 
-            -- local angle = math.atan(y - hy, x - hx)
-            -- Renderer.SetDrawColor(0, 255, 255, 150)
-            -- Renderer.DrawText(font, x, y, angle, 1)
+            local angle = math.atan(y - hy, x - hx)
+            Renderer.SetDrawColor(255, 0, 0, 255)
+            Renderer.DrawText(CreepBlocker.font, hx, hy, 'HOLD KEY DRINK COFFEE', 1)
 
-            local moves_to = CreepBlocker.GetPredictedPosition(npc, 0.67)
+            local moves_to = CreepBlocker.GetPredictedPosition(npc, 0.68)
 
             if not NPC.IsRunning(npc) or ranged then
                 -- do nothing here
@@ -143,7 +143,7 @@ function CreepBlocker.OnDraw()
             -- else
             --     sleep = curtime + 0.07
             -- end
-            CreepBlocker.sleep = curtime + 0.07 * 315 / speed
+            CreepBlocker.sleep = curtime + 0.06 * 315 / speed
             Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_STOP, myHero, best_position, nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_HERO_ONLY)
         end
     end
