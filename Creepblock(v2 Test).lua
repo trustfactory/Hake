@@ -93,7 +93,7 @@ function CreepBlocker.OnDraw()
             -- Renderer.SetDrawColor(0, 255, 255, 150)
             -- Renderer.DrawText(font, x, y, angle, 1)
 
-            local moves_to = CreepBlocker.GetPredictedPosition(npc, 0.68)
+            local moves_to = CreepBlocker.GetPredictedPosition(npc, 0.67)
 
             if not NPC.IsRunning(npc) or ranged then
                 -- do nothing here
@@ -139,11 +139,11 @@ function CreepBlocker.OnDraw()
                 end
             end
             -- if speed < 315 then
-            --     sleep = curtime + 0.05
+            --      sleep = curtime + 0.05
             -- else
             --     sleep = curtime + 0.07
             -- end
-            CreepBlocker.sleep = curtime + 0.05 * 315 / speed
+            CreepBlocker.sleep = curtime + 0.07 * 315 / speed
             Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_STOP, myHero, best_position, nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_HERO_ONLY)
         end
     end
@@ -176,7 +176,7 @@ end
 function CreepBlocker.GetPredictedPosition(npc, delay)
     local pos = Entity.GetAbsOrigin(npc)
     if not NPC.IsRunning(npc) or not delay then return pos end
-    local totalLatency = (NetChannel.GetAvgLatency(Enum.Flow.FLOW_INCOMING) + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)) -- * 2 -- this may fix bot is not stopping at high ping
+    local totalLatency = (NetChannel.GetAvgLatency(Enum.Flow.FLOW_INCOMING) + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2) -- * 2 -- this may fix bot is not stopping at high ping
     delay = delay + totalLatency
 
     local dir = Entity.GetRotation(npc):GetForward():Normalized()
