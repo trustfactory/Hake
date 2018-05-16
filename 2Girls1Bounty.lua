@@ -377,7 +377,7 @@ function BountyHunter.AutoTrack()
 		local enemy = Heroes.Get(i)
 		local sameTeam = Entity.GetTeamNum(enemy) == myTeam
 			local pos = Entity.GetAbsOrigin(enemy)
-			if Ability.IsReady(Track) and Ability.IsReady(WindWalk) and NPC.GetMana(myHero) > Ability.GetManaCost(WindWalk) + Ability.GetManaCost(Track) and NPC.IsEntityInRange(enemy, myHero, TrackRange) and not NPC.HasModifier(enemy, "modifier_bounty_hunter_track") and not NPC.IsLinkensProtected(enemy) then
+			if Ability.IsReady(Track) and Ability.IsReady(WindWalk) and NPC.GetMana(myHero) > Ability.GetManaCost(WindWalk) + Ability.GetManaCost(Track) and NPC.IsEntityInRange(enemy, myHero, TrackRange) and not NPC.HasModifier(enemy, "modifier_bounty_hunter_track") and not NPC.IsIllusion(enemy) and not NPC.IsLinkensProtected(enemy) then
 			if not sameTeam and not Entity.IsDormant(enemy) and Entity.GetHealth(enemy) > 0 then
 			if Menu.GetValue(BountyHunter.AutoTrackStyleValues) == 0 then
 			    Ability.CastTarget(Track, enemy)
