@@ -6,23 +6,6 @@ CreepBlocker.key = Menu.AddKeyOption({"Utility"}, "[Bot] CreepBlock", Enum.Butto
 CreepBlocker.skipRangedCreep = Menu.AddOption({ "Utility", "[Bot] Skip ranged creep" }, "Enabled", "Bot will try to skip ranged creep.")
 CreepBlocker.font = Renderer.LoadFont("Elephant", 20, Enum.FontWeight.EXTRABOLD)
 
-CreepBlocker.fasterhero = {
-    "npc_dota_hero_enchantress",
-    "npc_dota_hero_keeper_of_the_light",
-    "npc_dota_hero_pugna",
-    "npc_dota_hero_leshrac",
-    "npc_dota_hero_luna",
-    "npc_dota_hero_skywrath_mage"
-}
-
-function GetUnitName(fasterhero)
-    for i, fasterhero in pairs(CreepBlocker.fasterhero) do
-        if NPC.GetUnitName(Heroes.GetLocal()) == fasterhero then
-            return true
-        end
-    end
-end
-
 function CreepBlocker.OnGameStart()
 	CreepBlocker.init()
 end
@@ -39,6 +22,7 @@ function CreepBlocker.init()
     CreepBlocker.my_team = nil
     CreepBlocker.last_stop = 0
     CreepBlocker.sleep = 0
+    CreepBlocker.time = 0
     CreepBlocker.less_stopping = false
     CreepBlocker.Fountain = nil
 end
@@ -93,7 +77,7 @@ function CreepBlocker.OnDraw()
             Renderer.SetDrawColor(255, 0, 0, 255)
             Renderer.DrawText(CreepBlocker.font, hx, hy, 'BOT IN LEARNING MODE', 1)
 
-            local moves_to = CreepBlocker.GetPredictedPosition(npc, 0.68)
+            local moves_to = CreepBlocker.GetPredictedPosition(npc, 0.66)
 
             if not NPC.IsRunning(npc) or ranged then
                 -- do nothing here
@@ -122,35 +106,58 @@ function CreepBlocker.OnDraw()
             Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, myHero, best_position, nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_HERO_ONLY)
         end
         local dist = (best_position - origin):Length()
-        local speed = NPC.GetMoveSpeed(myHero)
+        local speed = CreepBlocker.GetMoveSpeed(myHero)
+
+        if speed <= 500 and speed >= 400 then
+            CreepBlocker.time = 0.15
+        elseif speed <= 400 and speed >= 385 then
+            CreepBlocker.time = 0.20
+        elseif speed <= 385 and speed >= 375 then
+            CreepBlocker.time = 0.25
+        elseif speed <= 375 and speed >= 365 then
+            CreepBlocker.time = 0.35
+        elseif speed <= 365 and speed >= 355 then
+            CreepBlocker.time = 0.40
+        elseif speed <= 355 and speed >= 345 then
+            CreepBlocker.time = 0.45
+        elseif speed <= 345 and speed >= 335 then
+            CreepBlocker.time = 0.50
+        elseif speed <= 335 and speed >= 325 then
+            CreepBlocker.time = 0.55
+        elseif speed <= 325 and speed >= 315 then
+            CreepBlocker.time = 0.65
+        elseif speed <= 315 and speed >= 305 then
+            CreepBlocker.time = 0.75
+        elseif speed <= 305 and speed >= 295 then
+            CreepBlocker.time = 0.85
+        elseif speed <= 295 and speed >= 285 then
+            CreepBlocker.time = 0.95
+        elseif speed <= 285 and speed >= 275 then
+            CreepBlocker.time = 1.00
+        elseif speed <= 275 and speed >= 265 then
+            CreepBlocker.time = 2.00
+        end
+
         -- if curtime > last_stop and dist >= 15 * speed / 315 and dist <= 150 * speed / 315 then
         if curtime > CreepBlocker.last_stop and dist >= 10 and dist <= 150 then
             if CreepBlocker.less_stopping then
-                if  GetUnitName(fasterhero) then
-                    CreepBlocker.last_stop = curtime + 0.7 * 315 / speed
-                else
-                    CreepBlocker.last_stop = curtime + 1.2 * 315 / speed
-                end
+                CreepBlocker.last_stop = curtime + CreepBlocker.time * 315 / speed
             elseif not CreepBlocker.less_stopping then
-                if  GetUnitName(fasterhero) then
-                    CreepBlocker.last_stop = curtime + 0.45 * 315 / speed
-                else
-                    CreepBlocker.last_stop = curtime + 0.9 * 315 / speed
-                end
+                CreepBlocker.last_stop = curtime + CreepBlocker.time + 0.12 * 315 / speed
             end
             -- if speed < 315 then
-            --      sleep = curtime + 0.05
+            --     sleep = curtime + 0.05
             -- else
             --     sleep = curtime + 0.07
             -- end
-            CreepBlocker.sleep = curtime + 0.06 * 315 / speed
+            CreepBlocker.sleep = curtime + 0.04 * 315 / speed
             Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_STOP, myHero, best_position, nil, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_HERO_ONLY)
         end
     end
 
     -- get my line and towers
     CreepBlocker.less_stopping = false
-    local TOWER_WARNING = 315
+    local TOWER_WARNING = 350
     for i, tower in pairs(CreepBlocker.top_towers) do
         local torigin = Entity.GetAbsOrigin(tower)
         if Entity.IsNPC(tower) and (origin - torigin):Length() <= TOWER_WARNING then
@@ -176,7 +183,7 @@ end
 function CreepBlocker.GetPredictedPosition(npc, delay)
     local pos = Entity.GetAbsOrigin(npc)
     if not NPC.IsRunning(npc) or not delay then return pos end
-    local totalLatency = (NetChannel.GetAvgLatency(Enum.Flow.FLOW_INCOMING) + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2) -- * 2 -- this may fix bot is not stopping at high ping
+    local totalLatency = (NetChannel.GetAvgLatency(Enum.Flow.FLOW_INCOMING) + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)) -- * 2 -- this may fix bot is not stopping at high ping
     delay = delay + totalLatency
 
     local dir = Entity.GetRotation(npc):GetForward():Normalized()
