@@ -6,7 +6,7 @@ Shadow.poisonKey = Menu.AddKeyOption({"Hero Specific","Shadow Demon"},"3. Poison
 Shadow.comboKey = Menu.AddKeyOption({"Hero Specific","Shadow Demon"},"2. Combo Key",Enum.ButtonCode.KEY_D)
 Shadow.optionEnable = Menu.AddOption({"Hero Specific","Shadow Demon"},"1. Enabled","Enable/Disable Shadow Demon Combo")
 Shadow.optionSDBlink = Menu.AddOption({ "Hero Specific", "Shadow Demon" }, "4. Use Blink to Initiate {{Shadow Demon}}", "")
-Shadow.optionSDBlinkRange = Menu.AddOption({ "Hero Specific", "Shadow Demon" }, "5. Set Safe Blink Initiation Range {{Shadow Demon}}", "If over 575, then Euls will not activate in combo, if Lens (+250 to your set Blink Range)", 200, 800, 25)
+Shadow.optionSDBlinkRange = Menu.AddOption({ "Hero Specific", "Shadow Demon" }, "5. Set Safe Blink Initiation Range {{Shadow Demon}}", "If over 575, then Euls will not activate in combo, if Lens (+250 to your set Blink Range)", 200, 1000, 25)
 --Skills Toggle Menu--
 Shadow.optionEnableDisruption = Menu.AddOption({ "Hero Specific","Shadow Demon","6. Skills"},"1. Use Disruption","Enable Or Disable")
 Shadow.optionEnableCatcher = Menu.AddOption({ "Hero Specific","Shadow Demon","6. Skills"},"2. Use Catcher","Enable Or Disable")
