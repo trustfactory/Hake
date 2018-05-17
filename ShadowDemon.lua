@@ -16,6 +16,14 @@ Shadow.optionEnableUlt = Menu.AddOption({ "Hero Specific","Shadow Demon","6. Ski
 Shadow.optionEnableGlimmer = Menu.AddOption({ "Hero Specific","Shadow Demon","7. Items"},"1. Use Glimmer Cape","Turn On/Off Glimmer Cape in Combo")
 Shadow.optionEnableEuls = Menu.AddOption({ "Hero Specific","Shadow Demon","7. Items"},"2. Use Euls","Turn On/Off Euls in Combo")
 
+-- global Variables
+Shadow.lastTick = 0
+Shadow.delay = 0
+
+function Shadow.ResetGlobalVariables()
+	Shadow.lastTick = 0
+	Shadow.delay = 0
+end
 
 
 
@@ -200,32 +208,56 @@ if not Menu.IsKeyDown(Shadow.comboKey) then return end
 	
 	if not hero then return end
 	
+	--Ability Calls--
     local Disruption = NPC.GetAbility(myHero, "shadow_demon_disruption")
     local Catcher = NPC.GetAbility(myHero, "shadow_demon_soul_catcher")
     local Poison = NPC.GetAbility(myHero, "shadow_demon_shadow_poison")
     local Ult = NPC.GetAbility(myHero, "shadow_demon_demonic_purge")
     
+    --Item Calls--
+    local Lens = NPC.GetItem(myHero, "item_aether_lens", true)
     local Blink  = NPC.GetItem(myHero, "item_blink", true)
     local Atos = NPC.GetItem(myHero, "item_rod_of_atos", true)
     local Veil  = NPC.GetItem(myHero, "item_veil_of_discord", true)
     local Euls = NPC.GetItem(myHero, "item_cyclone", true)
     local Glimmer = NPC.GetItem(myHero, "item_glimmer_cape", true)
 	
+	--Ability Ranges--
+    local DisruptionRange = Ability.GetCastRange(Disruption)
+  	local CatcherRange = Ability.GetCastRange(Catcher)
+  	local PoisonRange = Ability.GetCastRange(Poison)
+  	local UltRange = Ability.GetCastRange(Ult)
+  	
+  	--Item Ranges--
+  	local BlinkRange = 1200
+  	local AtosRange = 1150
+  	local EulsRange = 575
+    
+    if Lens then
+    		DisruptionRange = DisruptionRange + 250
+    		CatcherRange = CatcherRange + 250
+    		PoisonRange = PoisonRange + 250
+    		UltRange = UltRange + 250
+    		BlinkRange = BlinkRange + 250
+    		AtosRange = AtosRange + 250
+    		EulsRange = EulsRange +250   		
+    end
+    
 	if Menu.IsEnabled(Shadow.optionEnable) then
     
-    if hero and not NPC.IsIllusion(hero) and Utility.CanCastSpellOn(hero) then
-        if Blink and Menu.IsEnabled(Shadow.optionSDBlink) and Ability.IsReady(Blink) and NPC.IsEntityInRange(myHero, hero, 1150 + Menu.GetValue(Shadow.optionSDBlinkRange)) then
-            Ability.CastPosition(Blink, (Entity.GetAbsOrigin(hero) + (Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(hero)):Normalized():Scaled(Menu.GetValue(Shadow.optionSDBlinkRange)))) return end
+    if Shadow.SleepReady(0.05) and hero and not NPC.IsIllusion(hero) and Utility.CanCastSpellOn(hero) then
+        if Blink and Menu.IsEnabled(Shadow.optionSDBlink) and Ability.IsReady(Blink) and NPC.IsEntityInRange(myHero, hero, BlinkRange + Menu.GetValue(Shadow.optionSDBlinkRange)) then
+            Ability.CastPosition(Blink, (Entity.GetAbsOrigin(hero) + (Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(hero)):Normalized():Scaled(Menu.GetValue(Shadow.optionSDBlinkRange)))) Shadow.lastTick = os.clock() return end
         end
         
-        if Atos and Ability.IsCastable(Atos, mana) and not NPC.IsIllusion(hero) and not NPC.GetModifier(hero, "modifier_sheepstick_debuff") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero),Ability.GetCastRange(Atos),0) then Ability.CastTarget(Atos, hero) return end
+        if Shadow.SleepReady(0.05) and Atos and Ability.IsReady(Atos) and Ability.IsCastable(Atos, mana) and not NPC.IsIllusion(hero) and not NPC.GetModifier(hero, "modifier_sheepstick_debuff") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), AtosRange) then Ability.CastTarget(Atos, hero) Shadow.lastTick = os.clock() return end
         
-        if Veil and Ability.IsCastable(Veil, mana) and not NPC.IsIllusion(hero) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Veil),0) and heroPos then Ability.CastPosition(Veil, heroPos) return end
+        if Shadow.SleepReady(0.05) and Veil and Ability.IsReady(Veil) and Ability.IsCastable(Veil, mana) and not NPC.IsIllusion(hero) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Veil),0) and heroPos then Ability.CastPosition(Veil, heroPos) Shadow.lastTick = os.clock() return end
         
-        if Disruption and Menu.IsEnabled(Shadow.optionEnableDisruption) and Ability.IsCastable(Disruption, mana) and not NPC.IsIllusion(hero) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Disruption),0) then Ability.CastTarget(Disruption, hero) return end
+        if Shadow.SleepReady(0.3) and Disruption and Ability.IsReady(Disruption) and Menu.IsEnabled(Shadow.optionEnableDisruption) and Ability.IsCastable(Disruption, mana) and not NPC.IsIllusion(hero) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), DisruptionRange) then Ability.CastTarget(Disruption, hero) Shadow.lastTick = os.clock() return end
         
         -- algorithm for soul catcher
-        if Catcher and Menu.IsEnabled(Shadow.optionEnableCatcher) and Ability.IsCastable(Catcher, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Catcher)+Ability.GetCastRange(Catcher)*0.5,0) then
+        if Shadow.SleepReady(0.3) and Catcher and Ability.IsReady(Catcher) and Menu.IsEnabled(Shadow.optionEnableCatcher) and Ability.IsCastable(Catcher, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), CatcherRange+CatcherRange*0.5,0) then
                   
         -- get enemy origin
         -- get myHero origin
@@ -272,18 +304,32 @@ if not Menu.IsKeyDown(Shadow.comboKey) then return end
         end
 
         Ability.CastPosition(Catcher, heroPos)
-
+        Shadow.lastTick = os.clock()
         return end
          -- end algorithm for soul catcher
         
-        if Poison and Menu.IsEnabled(Shadow.optionEnablePoison) and Ability.IsCastable(Poison, mana) and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Poison),0) then Ability.CastPosition(Poison, heroPos) return end
+        if Shadow.SleepReady(0.3) and Poison and Ability.IsReady(Poison) and Menu.IsEnabled(Shadow.optionEnablePoison) and Ability.IsCastable(Poison, mana) and not NPC.HasModifier(hero, "modifier_eul_cyclone") and not NPC.IsIllusion(hero) and heroPos and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), PoisonRange) then Ability.CastPosition(Poison, heroPos) Shadow.lastTick = os.clock() return end
         
-        if Euls and Menu.IsEnabled(Shadow.optionEnableEuls) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Euls),0) then Ability.CastTarget(Euls, hero) return end
+        if Shadow.SleepReady(0.05) and Euls and Ability.IsReady(Euls) and Menu.IsEnabled(Shadow.optionEnableEuls) and Ability.IsCastable(Euls, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), EulsRange) and not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_ROOTED) then Ability.CastTarget(Euls, hero) Shadow.lastTick = os.clock() return end
 
-        if Ult and Menu.IsEnabled(Shadow.optionEnableUlt) and Ability.IsCastable(Ult, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Ult),0) then Ability.CastTarget(Ult, hero) return end
+        if Shadow.SleepReady(0.3) and Ult and Ability.IsReady(Ult) and Menu.IsEnabled(Shadow.optionEnableUlt) and Ability.IsCastable(Ult, mana) and not NPC.HasModifier(hero, "modifier_eul_cyclone") and not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and not NPC.IsIllusion(hero) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), UltRange) then Ability.CastTarget(Ult, hero) Shadow.lastTick = os.clock() return end
         
-        if Glimmer and Menu.IsEnabled(Shadow.optionEnableGlimmer) and Ability.IsCastable(Glimmer, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Glimmer),0) then Ability.CastTarget(Glimmer, myHero) return end
+        if Shadow.SleepReady(0.05) and Glimmer and Ability.IsReady(Glimmer) and Menu.IsEnabled(Shadow.optionEnableGlimmer) and Ability.IsCastable(Glimmer, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), Ability.GetCastRange(Glimmer),0) then Ability.CastTarget(Glimmer, myHero) Shadow.lastTick = os.clock() return end
     end
+end
+
+function Shadow.SleepReady(sleep)
+
+	if (os.clock() - Shadow.lastTick) >= sleep then
+		return true
+	end
+	return false
+end
+
+function Shadow.makeDelay(sec)
+
+	Shadow.delay = sec + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)
+	Shadow.lastTick = os.clock()
 end
 	
 return Shadow
