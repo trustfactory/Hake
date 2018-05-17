@@ -44,6 +44,10 @@ function Lina.OnUpdate()
 	if Menu.IsKeyDown(Lina.optionKey3) then
     Lina.DragonHarass()
 	end
+	
+	if not Engine.IsInGame() then
+	Lina.ResetGlobalVariables()
+	end
 end	
 
 function Lina.castPrediction(myHero, enemy, adjustmentVariable)
@@ -491,6 +495,9 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
 			return
 		end
 	end
+	
+	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastPosition(Array, enemyPos) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
 	
 	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and Dragon and Menu.IsEnabled(Lina.optionEnableDragon) and Ability.IsCastable(Dragon, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastTarget(Dragon, enemy) Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return end
