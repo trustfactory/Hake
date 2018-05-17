@@ -45,6 +45,10 @@ function Shadow.OnUpdate()
         Shadow.Combo()
     end
     
+    if not Engine.IsInGame() then
+	Shadow.ResetGlobalVariables()
+	end
+    
 
     --auto kill with poison release
     local kaya = NPC.GetItem(myHero, "item_kaya", true)
