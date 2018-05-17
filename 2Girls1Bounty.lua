@@ -274,6 +274,10 @@ function BountyHunter.OnUpdate()
     if Menu.IsEnabled(BountyHunter.AutoTrackStyle) and AutoMode then
         BountyHunter.AutoTrack()
     end
+    
+    if not Engine.IsInGame() then
+	BountyHunter.ResetGlobalVariables()
+	end
 end
 
 function BountyHunter.KillableTrack()
