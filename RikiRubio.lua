@@ -305,11 +305,11 @@ if not Menu.IsKeyDown(RikiRubio.optionKey) then return end
 	
 	if Menu.IsEnabled(RikiRubio.optionEnable) then
 	
-	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(enemy, "modifier_ghost_state")
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active")
 	and NPC.IsAttacking(myHero) and Nullifier and Menu.IsEnabled(RikiRubio.optionEnableNullifier) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Nullifier, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), NullifierRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) then Ability.CastTarget(Nullifier, enemy) return 
 	end
 		     
-	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_ghost_state")
 	and Strike and Menu.IsEnabled(RikiRubio.optionEnableStrike) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Strike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), BlinkRange) then Ability.CastTarget(Strike, enemy) return
 	end	     
 
