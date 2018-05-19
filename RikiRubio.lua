@@ -229,7 +229,7 @@ function RikiRubio.KillSteal()
     if not BlinkStrike or not Ability.IsCastable(BlinkStrike, NPC.GetMana(myHero)) then return end
     
     --Ability Ranges--
-    local BlinkRange = Ability.GetCastRange(BlinkStrike)
+    local BlinkRange = 800
     
     --Talent Tree Bonus Range-- 	
   	local TalentBonusRange = NPC.GetAbility(myHero, "special_bonus_unique_riki_3")
@@ -238,15 +238,19 @@ function RikiRubio.KillSteal()
     	BlinkRange = BlinkRange + 900
   	end	
 
+
     for i = 1, Heroes.Count() do
         local enemy = Heroes.Get(i)
         local BasicAttackDamage = NPC.GetDamageMultiplierVersus(myHero, enemy) * ((NPC.GetMinDamage(myHero) + NPC.GetBonusDamage(myHero)) * NPC.GetArmorDamageMultiplier(enemy))
         local damage = BasicAttackDamage + (40 + 15 * Ability.GetLevel(BlinkStrike))
+        if not NPC.IsEntityInRange(myHero, enemy, BlinkRange) then return
+        else
         
-        if enemy and not NPC.IsIllusion(enemy) and not Entity.IsSameTeam(myHero, enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), BlinkRange) and Utility.CanCastSpellOn(enemy)
+            if enemy and not NPC.IsIllusion(enemy) and not Entity.IsSameTeam(myHero, enemy) and not NPC.HasModifier(enemy, "modifier_ghost_state") and Utility.CanCastSpellOn(enemy)
         and damage >= Entity.GetHealth(enemy) then
             Ability.CastTarget(BlinkStrike, enemy)
             return
+            end
         end
     end
 end
@@ -301,46 +305,46 @@ if not Menu.IsKeyDown(RikiRubio.optionKey) then return end
 	
 	if Menu.IsEnabled(RikiRubio.optionEnable) then
 	
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
-	and Smoke and Menu.IsEnabled(RikiRubio.optionEnableSmoke) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Smoke, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), SmokeRange) then Ability.CastPosition(Smoke, enemyPos) return 
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active") and not NPC.HasModifier(enemy, "modifier_ghost_state")
+	and NPC.IsAttacking(myHero) and Nullifier and Menu.IsEnabled(RikiRubio.optionEnableNullifier) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Nullifier, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), NullifierRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) then Ability.CastTarget(Nullifier, enemy) return 
 	end
 		     
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and Strike and Menu.IsEnabled(RikiRubio.optionEnableStrike) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Strike, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), BlinkRange) then Ability.CastTarget(Strike, enemy) return
 	end	     
-	
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Smoke and Menu.IsEnabled(RikiRubio.optionEnableSmoke) and NPC.IsAttacking(myHero) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Smoke, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), SmokeRange) then Ability.CastPosition(Smoke, enemyPos) return 
+	end
+
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and Diffusal and Menu.IsEnabled(RikiRubio.optionEnableDiffusal) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Diffusal, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DiffusalRange) then Ability.CastTarget(Diffusal, enemy) return
 	end
 	
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and NPC.IsAttacking(myHero) and Medallion and Menu.IsEnabled(RikiRubio.optionEnableMedallion) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Medallion, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), MedallionRange) then Ability.CastTarget(Medallion, enemy) return
 	end
 	
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and NPC.IsAttacking(myHero) and Crest and Menu.IsEnabled(RikiRubio.optionEnableCrest) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Crest, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), CrestRange) then Ability.CastTarget(Crest, enemy) return
 	end
 	
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and NPC.IsAttacking(myHero) and Urn and Menu.IsEnabled(RikiRubio.optionEnableUrn) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Urn, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), UrnRange) and Item.GetCurrentCharges(Urn) > 0 and not NPC.HasModifier(enemy, "modifier_item_urn_damage") then Ability.CastTarget(Urn, enemy) return 
 	end
 	
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and NPC.IsAttacking(myHero) and Vessel and Menu.IsEnabled(RikiRubio.optionEnableVessel) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Vessel, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), VesselRange) and Item.GetCurrentCharges(Vessel) > 0 and not NPC.HasModifier(enemy, "modifier_item_spirit_vessel_damage") then Ability.CastTarget(Vessel, enemy) return 
 	end
 	
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and Abyssal and Menu.IsEnabled(RikiRubio.optionEnableAbyssal) and Ability.IsCastable(Abyssal, mana) and not Ability.IsChannelling(Ult) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), AbyssalRange) then Ability.CastTarget(Abyssal, enemy) return
 	end
 	
 	if NPC.IsAttacking(myHero) and Butterfly and Menu.IsEnabled(RikiRubio.optionEnableButterfly) and not Ability.IsChannelling(Ult) and Ability.IsReady(Butterfly) and NPC.IsEntityInRange(myHero, enemy, NPC.GetAttackRange(myHero)) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_ROOTED) and not NPC.IsStunned(enemy) then Ability.CastNoTarget(Butterfly) return 
 	end
 	
-	if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_lotus_orb_active")
-	and NPC.IsAttacking(myHero) and Nullifier and Menu.IsEnabled(RikiRubio.optionEnableNullifier) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Nullifier, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), NullifierRange) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_HEXED) and not NPC.IsSilenced(enemy) then Ability.CastTarget(Nullifier, enemy) return 
-	end
-	
-	if NPC.IsAttacking(myHero) and not Entity.IsDormant(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and Ult and Ability.IsReady(Ult) and Menu.IsEnabled(RikiRubio.optionEnableUlt) and Ability.IsCastable(Ult, mana) then
+	if enemy and NPC.IsAttacking(myHero) and not Entity.IsDormant(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and Ult and Ability.IsReady(Ult) and Menu.IsEnabled(RikiRubio.optionEnableUlt) and Ability.IsCastable(Ult, mana) then
 			if Aghs then
 				Ability.CastTarget(Ult, myHero)
 			else
