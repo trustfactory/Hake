@@ -260,11 +260,10 @@ if not Menu.IsKeyDown(RikiRubio.optionKey) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_riki" then return end
     local enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
+    if not enemy then return end
     local enemyPos = Entity.GetAbsOrigin(enemy)
     local mousePos = Input.GetWorldCursorPos()
     local mana = NPC.GetMana(myHero)
-	
-	if not enemy then return end
 	
 	--Ability Calls--
     local Smoke = NPC.GetAbility(myHero, "riki_smoke_screen")
