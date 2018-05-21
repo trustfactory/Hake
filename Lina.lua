@@ -501,8 +501,8 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
 	    if Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 		and Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastPosition(Array, enemyPos) return end
 	
-		if Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and NPC.IsEntityInRange(myHero, enemy, ArrayRange, 0) then
-			local pred = Ability.GetCastPoint(Array) + 0.5 + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING))
+		if Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then
+			local pred = Ability.GetCastPoint(Array) + (Entity.GetAbsOrigin(enemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D()/1325) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 			local predPos = Lina.castPrediction(myHero, enemy, pred)
 			if not NPC.IsPositionInRange(myHero, predPos, ArrayRange, 0) then
 				local myPos = Entity.GetAbsOrigin(myHero)
