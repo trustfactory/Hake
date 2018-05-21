@@ -295,6 +295,7 @@ fooAllInOne.optionHeroSFBlinkRange = Menu.AddOption({ "Utility","foos AllInOne",
 fooAllInOne.optionHeroSFComboRaze = Menu.AddOption({ "Utility","foos AllInOne", "3. Hero Scripts", "2. Agility heroes", "Shadow Fiend" }, "4. Use raze in combo {{SF}}", "")
 fooAllInOne.optionHeroSFDrawRazeCircle = Menu.AddOption({ "Utility","foos AllInOne", "3. Hero Scripts", "2. Agility heroes", "Shadow Fiend" }, "5. Draw raze AoEs {{SF}}", "with particle engine")
 fooAllInOne.optionHeroTrollWarlord = Menu.AddOption({ "Utility","foos AllInOne", "3. Hero Scripts", "2. Agility heroes", "Troll Warlord" }, "0. Enable {{Troll Warlord}}", "Auto-Switch and Combo")
+fooAllInOne.optionHeroTrollUltCombo = Menu.AddOption({ "Utility","foos AllInOne", "3. Hero Scripts", "2. Agility heroes", "Troll Warlord" }, "1. Use Ult in combo {{Troll Warlord}}", "If enabled, Troll will use Ult in combo")
 fooAllInOne.optionHeroViper = Menu.AddOption({ "Utility","foos AllInOne", "3. Hero Scripts", "2. Agility heroes", "Viper" }, "1. Viper Combo", "basic Viper combo")
 fooAllInOne.optionHeroViperBlink = Menu.AddOption({ "Utility","foos AllInOne", "3. Hero Scripts", "2. Agility heroes", "Viper" }, "2. Use blink in combo {{viper}}", "")
 fooAllInOne.optionHeroViperBlinkRange = Menu.AddOption({ "Utility","foos AllInOne", "3. Hero Scripts", "2. Agility heroes", "Viper" }, "2.1 Blink range to enemy {{viper}}", "will keep distance to enemy", 100, 550, 50)
@@ -1935,7 +1936,7 @@ fooAllInOne.AbilityList = {
 	{ "npc_dota_hero_troll_warlord", "troll_warlord_fervor", "utility", "0" , "0" },
 	{ "npc_dota_hero_troll_warlord", "troll_warlord_whirling_axes_melee", "utility", "0" , "0" },
 	{ "npc_dota_hero_troll_warlord", "troll_warlord_whirling_axes_ranged", "utility", "0" , "0" },
-	{ "npc_dota_hero_troll_warlord", "troll_warlord_whirling_axes_melee", "nuke", "special" , "damage" },
+	{ "npc_dota_hero_troll_warlord", "troll_warlord_whirling_axes_melee", "nuke", "no target" , "damage" },
 	{ "npc_dota_hero_troll_warlord", "troll_warlord_whirling_axes_ranged", "nuke", "position" , "axe_damage" },
 	{ "npc_dota_hero_tusk", "tusk_ice_shards", "nuke", "skillshot" , "shard_damage" },
 	{ "npc_dota_hero_tusk", "tusk_walrus_kick", "nuke", "target" , "0" },
@@ -16006,7 +16007,7 @@ function fooAllInOne.TrollCombo(myHero, enemy)
 			end
 		end
 		
-		if NPC.IsEntityInRange(myHero, enemy, 300) then
+		if Menu.IsEnabled(fooAllInOne.optionHeroTrollUltCombo) then
 			if fooAllInOne.SleepReady(0.1) and ulti and Ability.IsCastable(ulti, myMana) then
 				Ability.CastNoTarget(ulti)
 				fooAllInOne.lastTick = os.clock()
@@ -17104,9 +17105,9 @@ function fooAllInOne.DrowRangerCombo(myHero, enemy)
 				end
 			else
 				if Wave and Ability.IsCastable(Wave, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(Wave)) then
-					local WavePrediction = 0.25 + (Entity.GetAbsOrigin(enemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D() / 2000) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
-					Ability.CastPosition(Wave, fooAllInOne.castPrediction(myHero, enemy, WavePrediction))
-					fooAllInOne.lastTick = os.clock() + 0
+					local WavePrediction = Ability.GetCastPoint(Wave) + (Entity.GetAbsOrigin(enemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D() / 2000) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
+					Ability.CastPosition(Wave, fooAllInOne.castLinearPrediction(myHero, enemy, WavePrediction))
+					fooAllInOne.lastTick = os.clock()
 					return
 				end
 				if TrueShot and Ability.IsCastable(TrueShot, myMana) then
@@ -25202,14 +25203,20 @@ function fooAllInOne.AutoNukeKillSteal(myHero)
 										return
 									end
 									if targetMode == "no target" then
-										Ability.CastNoTarget(NPC.GetAbility(myHero, skillName))
-										break
-										return
+											Ability.CastNoTarget(NPC.GetAbility(myHero, skillName))
+											break
+											return
 									end
 									if targetMode == "skillshot" then
 										if skillName == "windrunner_powershot" then
 											local powershotPrediction = 1 + (Entity.GetAbsOrigin(stealEnemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D() / 3000) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 											Ability.CastPosition(NPC.GetAbility(myHero, skillName), fooAllInOne.castLinearPrediction(myHero, stealEnemy, powershotPrediction))
+											break
+											return
+										end
+										if skillName == "troll_warlord_whirling_axes_ranged" then
+											local WhirlRangePrediction = 0.2 + (Entity.GetAbsOrigin(stealEnemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D() / 1500) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
+											Ability.CastPosition(NPC.GetAbility(myHero, skillName), fooAllInOne.castLinearPrediction(myHero, stealEnemy, WhirlRangePrediction))
 											break
 											return
 										end
