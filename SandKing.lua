@@ -4,7 +4,7 @@ Sandking.optionEnable = Menu.AddOption({"Hero Specific","Sandking"},"1. Enabled"
 Sandking.optionKey = Menu.AddKeyOption({"Hero Specific","Sandking"},"2. Non-Ult Combo Key",Enum.ButtonCode.KEY_D)
 Sandking.optionKey2 = Menu.AddKeyOption({"Hero Specific","Sandking"},"3. Ult Combo Key",Enum.ButtonCode.KEY_F)
 Sandking.optionBlink = Menu.AddOption({"Hero Specific", "Sandking"}, "4. Use Blink to Initiate {{Sandking}}", "Use Blink Dagger to initiate")
-Sandking.optionBlinkStyle = Menu.AddOption({"Hero Specific", "Sandking"}, "5. Blink Style {{Sandking}}", "Blink to Cursor, or Blink to Best Position", 0, 1, 1)
+Sandking.optionBlinkStyle = Menu.AddOption({"Hero Specific", "Sandking"}, "5. Blink Style for Ult Combo {{Sandking}}", "Blink to Cursor, or Blink to Best Position", 0, 1, 1)
 Sandking.BKBEnable = Menu.AddOption({"Hero Specific", "Sandking"}, "6. Use BKB Before Ultimate", "Enable Or Disable")
 Sandking.BKBEnable1 = Menu.AddOption({"Hero Specific", "Sandking"}, "6. Use BKB After Ultimate", "Enable Or Disable")
 --Skills Toggle Menu--
