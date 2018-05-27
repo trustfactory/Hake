@@ -407,11 +407,10 @@ if not Menu.IsKeyDown(OrlandoDoom.optionKey) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_doom_bringer" then return end
     local enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
+    if not enemy then return end
     local enemyPos = Entity.GetAbsOrigin(enemy) 
     local mousePos = Input.GetWorldCursorPos()
     local mana = NPC.GetMana(myHero)
-	
-	if not enemy then return end
 
 --Ability Calls--	
     local Scorched = NPC.GetAbility(myHero, "doom_bringer_scorched_earth")
@@ -620,13 +619,12 @@ function OrlandoDoom.UltCombo()
 if not Menu.IsKeyDown(OrlandoDoom.optionKey2) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_doom_bringer" then return end
-    local enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
-    local enemyPos = Entity.GetAbsOrigin(enemy) 
+    local enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY) 
+    if not enemy then return end
+    local enemyPos = Entity.GetAbsOrigin(enemy)
     local mousePos = Input.GetWorldCursorPos()
     local mana = NPC.GetMana(myHero)
 	
-	if not enemy then return end
-
 --Ability Calls--	
     local Scorched = NPC.GetAbility(myHero, "doom_bringer_scorched_earth")
     local Infernal = NPC.GetAbility(myHero, "doom_bringer_infernal_blade")
