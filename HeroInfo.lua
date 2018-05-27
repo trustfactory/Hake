@@ -119,7 +119,7 @@ npc_dota_hero_dragon_knight = {
  AttackTime = 1.7,
  AttackPoint = 0.5,
  AttackRange = 150,
- MovementSpeed = 285,
+ MovementSpeed = 280,
  TurnRate = 0.6,
  AttackBackSwing = 0.5},
 
@@ -161,7 +161,7 @@ npc_dota_hero_wisp = {
  AttackPoint = 0.15,
  AttackRange = 575,
  ProjectileSpeed = 1200,
- MovementSpeed = 290,
+ MovementSpeed = 280,
  TurnRate = 0.7,
  AttackBackSwing = 0.4},
 
@@ -337,7 +337,7 @@ npc_dota_hero_skeleton_king = {
 --Agility Heroes--
 
 npc_dota_hero_antimage = {
- AttackTime = 1.45,
+ AttackTime = 1.4,
  AttackPoint = 0.3,
  AttackRange = 150,
  MovementSpeed = 310,
@@ -728,7 +728,7 @@ npc_dota_hero_death_prophet = {
  AttackPoint = 0.56,
  AttackRange = 600,
  ProjectileSpeed = 1000,
- MovementSpeed = 310,
+ MovementSpeed = 305,
  TurnRate = 0.5,
  AttackBackSwing = 0.51},
 
@@ -833,7 +833,7 @@ npc_dota_hero_furion = {
 
 npc_dota_hero_necrolyte = {
  AttackTime = 1.7,
- AttackPoint = 0.53,
+ AttackPoint = 0.4,
  AttackRange = 550,
  ProjectileSpeed = 900,
  MovementSpeed = 285,
