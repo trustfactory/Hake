@@ -324,23 +324,27 @@ local myHero = Heroes.GetLocal()
     	DragonRange = DragonRange + 125
     end
 
-if Dragon and Menu.IsKeyDown(Lina.optionKey3) and Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsEntityInRange(myHero, enemy, DragonRange) then
-		local pred = Ability.GetCastPoint(Dragon) + (Entity.GetAbsOrigin(enemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D() / 1200) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
-		Ability.CastPosition(NPC.GetAbility(myHero, "lina_dragon_slave"), Lina.castLinearPrediction(myHero, enemy, pred))
-		return 
+	if Dragon and Menu.IsKeyDown(Lina.optionKey3) then
+		if Ability.IsCastable(Dragon, mana) and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") then
+			if NPC.IsEntityInRange(myHero, enemy, DragonRange) then
+			local pred = Ability.GetCastPoint(Dragon) + (Entity.GetAbsOrigin(enemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D() / 1200) + (0.03 * math.pi) / NPC.GetTurnRate(enemy) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
+				Ability.CastPosition(Dragon, Lina.castLinearPrediction(myHero, enemy, pred))
+				return
+			end
+		end
 	end
 	Lina.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET", enemy, nil) return
-end
+	end
 
 function Lina.Combo()
 if not Menu.IsKeyDown(Lina.optionKey) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_lina" then return end
     local enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
+    if not enemy then return end
+    local enemyPos = Entity.GetAbsOrigin(enemy)
     local mousePos = Input.GetWorldCursorPos()
     local mana = NPC.GetMana(myHero)
-	
-	if not enemy then return end
 
 --Ability Calls--	
     local Dragon = NPC.GetAbility(myHero, "lina_dragon_slave")
@@ -432,11 +436,10 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_lina" then return end
     local enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
+    if not enemy then return end
     local enemyPos = Entity.GetAbsOrigin(enemy)
     local mousePos = Input.GetWorldCursorPos()
     local mana = NPC.GetMana(myHero)
-	
-	if not enemy then return end
 
 --Ability Calls--	
     local Dragon = NPC.GetAbility(myHero, "lina_dragon_slave")
@@ -502,7 +505,7 @@ if not Menu.IsKeyDown(Lina.optionKey2) then return end
 		and Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then Ability.CastPosition(Array, enemyPos) return end
 	
 		if Array and Menu.IsEnabled(Lina.optionEnableArray) and Ability.IsCastable(Array, mana) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and NPC.IsRunning(enemy) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), ArrayRange) then
-			local pred = Ability.GetCastPoint(Array) + (Entity.GetAbsOrigin(enemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D()/1325) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
+			local pred = Ability.GetCastPoint(Array) + (Entity.GetAbsOrigin(enemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D()/1325) + (0.03 * math.pi) / NPC.GetTurnRate(enemy) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 			local predPos = Lina.castPrediction(myHero, enemy, pred)
 			if not NPC.IsPositionInRange(myHero, predPos, ArrayRange, 0) then
 				local myPos = Entity.GetAbsOrigin(myHero)
