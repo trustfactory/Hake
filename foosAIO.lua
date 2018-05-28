@@ -1379,7 +1379,7 @@ fooAllInOne.attackPointTable = {
 	npc_dota_hero_monkey_king = { 0.5, 0.5, 1300 },
 	npc_dota_hero_naga_siren = { 0.5, 0.5, 0 },
 	npc_dota_hero_furion = { 0.4, 0.77, 1125 },
-	npc_dota_hero_necrolyte = { 0.53, 0.47, 900 },
+	npc_dota_hero_necrolyte = { 0.4, 0.47, 900 },
 	npc_dota_hero_night_stalker = { 0.55, 0.55, 0 },
 	npc_dota_hero_nyx_assassin = { 0.46, 0.54, 0 },
 	npc_dota_hero_ogre_magi = { 0.3, 0.3, 0 },
@@ -11396,19 +11396,19 @@ function fooAllInOne.centaurCombo(myHero, enemy)
 
 					if hoofStomp and Ability.IsCastable(hoofStomp, myMana) and NPC.IsEntityInRange(myHero, enemy, stunRange) then 
 						Ability.CastNoTarget(hoofStomp)
-						fooAllInOne.lastTick = os.clock() + 0 + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) 
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(hoofStomp) + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) 
 						return
 					end
 
 					if blademail and Ability.IsCastable(blademail, myMana) and NPC.HasModifier(enemy, "modifier_stunned") then 
 						Ability.CastNoTarget(blademail)
-						fooAllInOne.lastTick = os.clock() + 0 + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)
+						fooAllInOne.lastTick = os.clock() + 0.05 + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)
 						return
 					end
 
 					if doubleEdge and Ability.IsCastable(doubleEdge, myMana) and NPC.IsEntityInRange(myHero, enemy, 150) and not NPC.IsLinkensProtected(enemy) then 
 						Ability.CastTarget(doubleEdge, enemy)
-						fooAllInOne.lastTick = os.clock() + 0 + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(doubleEdge) + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)
 						return
 					end
 				end
@@ -12260,19 +12260,19 @@ function fooAllInOne.OgreCombo(myHero, enemy)
 		
 				if Q and Ability.IsCastable(Q, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(Q)) then
 					Ability.CastTarget(Q, enemy)
-					fooAllInOne.lastTick = os.clock() + 0.45
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 					return
 				end
 
 				if W and Ability.IsCastable(W, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(W)) then
 					Ability.CastTarget(W, enemy)
-					fooAllInOne.lastTick = os.clock() + 0.45
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 					return
 				end
 
 				if S and Ability.IsCastable(S, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(S)) then
 					Ability.CastTarget(S, enemy)
-					fooAllInOne.lastTick = os.clock() + 0.45
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(S)
 					return
 				end
 			end
@@ -12313,13 +12313,13 @@ function fooAllInOne.VSCombo(myHero, enemy)
 		
 					if Q and Ability.IsCastable(Q, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(Q)) and not NPC.IsLinkensProtected(enemy) then
 						Ability.CastTarget(Q, enemy)
-						fooAllInOne.lastTick = os.clock() + 0.35
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 						return
 					end
 
 					if W and Ability.IsCastable(W, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(W)) then
 						if not NPC.HasModifier(enemy, "modifier_vengefulspirit_wave_of_terror") then
-							local pred = 0.3 + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 2000) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
+							local pred = Ability.GetCastPoint(W) + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 2000) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 							Ability.CastPosition(W, fooAllInOne.castPrediction(myHero, enemy, pred))
 							fooAllInOne.lastTick = os.clock() + 0.35
 							return
@@ -12342,7 +12342,7 @@ function fooAllInOne.VSCombo(myHero, enemy)
 					if not check then
 						if W and Ability.IsCastable(W, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(W)) then
 							if not NPC.HasModifier(enemy, "modifier_vengefulspirit_wave_of_terror") then
-								local pred = 0.3 + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 2000) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
+								local pred = Ability.GetCastPoint(W) + ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() / 2000) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 								local predPos = fooAllInOne.castPrediction(myHero, enemy, pred)
 								Ability.CastPosition(W, Entity.GetAbsOrigin(myHero) + (predPos - Entity.GetAbsOrigin(myHero)):Normalized():Scaled(300))
 								fooAllInOne.lastTick = os.clock() + 0.35
@@ -12436,7 +12436,7 @@ function fooAllInOne.CMCombo(myHero, enemy)
 				if W and Ability.IsCastable(W, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(W)) then
 					if fooAllInOne.TargetGotDisableModifier(myHero, enemy) == false then
 						Ability.CastTarget(W, enemy)
-						fooAllInOne.lastTick = os.clock() + 0
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 						return
 					end
 				end
@@ -12445,7 +12445,7 @@ function fooAllInOne.CMCombo(myHero, enemy)
 					local bestPos = fooAllInOne.getBestPosition(Heroes.InRadius(Entity.GetAbsOrigin(enemy), 820, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY), 410)
 					if bestPos ~= nil then
 						Ability.CastPosition(Q, bestPos)
-						fooAllInOne.lastTick = os.clock() + 0
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 						return
 					end
 				end
@@ -12558,10 +12558,10 @@ function fooAllInOne.DPCombo(myHero, enemy)
 			if os.clock() > fooAllInOne.lastTick then
 		
 				if Q and Ability.IsCastable(Q, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(Q)) then
-					local carrionPrediction = 0.5 + (Entity.GetAbsOrigin(enemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D() / 1100) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
+					local carrionPrediction = Ability.GetCastPoint(Q) + (Entity.GetAbsOrigin(enemy):__sub(Entity.GetAbsOrigin(myHero)):Length2D() / 1100) + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 					local predictedPos = Entity.GetAbsOrigin(myHero) + (fooAllInOne.castLinearPrediction(myHero, enemy, carrionPrediction) - Entity.GetAbsOrigin(myHero)):Normalized():Scaled(250)
 					Ability.CastPosition(Q, predictedPos)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 					return
 				end
 
@@ -12569,14 +12569,14 @@ function fooAllInOne.DPCombo(myHero, enemy)
 					local bestPos = fooAllInOne.getBestPosition(Heroes.InRadius(Entity.GetAbsOrigin(enemy), 820, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY), 410)
 					if bestPos ~= nil then
 						Ability.CastPosition(W, bestPos)
-						fooAllInOne.lastTick = os.clock() + 0
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 						return
 					end
 				end
 
 				if E and Ability.IsCastable(E, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(E)) then
 					Ability.CastTarget(E, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(E)
 					return
 				end
 			end
@@ -12618,7 +12618,7 @@ function fooAllInOne.ViperCombo(myHero, enemy)
 						local bestPos = fooAllInOne.getBestPosition(Heroes.InRadius(Entity.GetAbsOrigin(enemy), 570, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY), 285)
 						if bestPos ~= nil and NPC.IsPositionInRange(myHero, bestPos, Ability.GetCastRange(W), 0) then
 							Ability.CastPosition(W, bestPos)
-							fooAllInOne.lastTick = os.clock() + 0
+							fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 							return
 						end
 					end
@@ -12630,14 +12630,14 @@ function fooAllInOne.ViperCombo(myHero, enemy)
 								return
 							else
 								Ability.CastTarget(ult, enemy)
-								fooAllInOne.lastTick = os.clock() + 0
+								fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(ult)
 								return
 							end
 
 						else
 							if NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(ult)) then
 								Ability.CastTarget(ult, enemy)
-								fooAllInOne.lastTick = os.clock() + 0
+								fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(ult)
 								return
 							end
 						end
@@ -12769,7 +12769,7 @@ function fooAllInOne.PugnaCombo(myHero, enemy)
 
 				if W and Ability.IsCastable(W, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(W)) then
 					Ability.CastTarget(W, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 					return
 				end
 		
@@ -12899,13 +12899,13 @@ function fooAllInOne.NSCombo(myHero, enemy)
 		
 				if Q and Ability.IsCastable(Q, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(Q)) then
 					Ability.CastTarget(Q, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 					return
 				end
 
 				if W and Ability.IsCastable(W, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(W)) then
 					Ability.CastTarget(W, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 					return
 				end
 			end
@@ -12951,7 +12951,7 @@ function fooAllInOne.UndyingCombo(myHero, enemy)
 					local bestPos = fooAllInOne.getBestPosition(Heroes.InRadius(Entity.GetAbsOrigin(enemy), 620, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY), 310)
 					if bestPos ~= nil then
 						Ability.CastPosition(Q, bestPos)
-						fooAllInOne.lastTick = os.clock() + 0
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 						return
 					end
 				end
@@ -12976,13 +12976,13 @@ function fooAllInOne.UndyingCombo(myHero, enemy)
 					if not saving then
 						if #Entity.GetUnitsInRadius(myHero, 1290, Enum.TeamType.TEAM_BOTH) >= Menu.GetValue(fooAllInOne.optionHeroUndyingSoulCount) then
 							Ability.CastTarget(W, enemy)
-							fooAllInOne.lastTick = os.clock() + 0
+							fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 							return
 						end
 					else
 						if savingUnit ~= nil then
 							Ability.CastTarget(W, savingUnit)
-							fooAllInOne.lastTick = os.clock() + 0
+							fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 							return
 						end
 					end	
@@ -12992,7 +12992,7 @@ function fooAllInOne.UndyingCombo(myHero, enemy)
 					if #Entity.GetHeroesInRadius(myHero, 700, Enum.TeamType.TEAM_BOTH) >= Menu.GetValue(fooAllInOne.optionHeroUndyingUltCount) then
 						if ult and Ability.IsCastable(ult, myMana) and NPC.IsEntityInRange(myHero, enemy, 700) then
 							Ability.CastNoTarget(ult)
-							fooAllInOne.lastTick = os.clock() + 0
+							fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(ult)
 							return
 						end
 					end
@@ -13007,7 +13007,7 @@ function fooAllInOne.UndyingCombo(myHero, enemy)
 	if Entity.GetHealth(myHero) / Entity.GetMaxHealth(myHero) < Menu.GetValue(fooAllInOne.optionHeroUndyingSoulTreshold) / 100 then
 		if W and Ability.IsCastable(W, myMana) then
 			Ability.CastTarget(W, myHero)
-			fooAllInOne.lastTick = os.clock() + 0
+			fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 			return
 		end
 	end
@@ -13017,7 +13017,7 @@ function fooAllInOne.UndyingCombo(myHero, enemy)
 			if ally and Entity.IsAlive(ally) and not NPC.IsIllusion(ally) then
 				if Entity.GetHealth(ally) / Entity.GetMaxHealth(ally) < Menu.GetValue(fooAllInOne.optionHeroUndyingSoulTreshold) / 100 then
 					Ability.CastTarget(W, ally)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 					return
 				end
 			end
@@ -13109,20 +13109,20 @@ function fooAllInOne.CKCombo(myHero, enemy)
 		
 				if W and Ability.IsCastable(W, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(W)) then
 					Ability.CastTarget(W, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 					return
 				end
 		
 				if Q and Ability.IsCastable(Q, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(Q)) then
 					Ability.CastTarget(Q, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 					return
 				end
 
 				if Menu.IsEnabled(fooAllInOne.optionHeroCKUlt) then
 					if ult and Ability.IsCastable(ult, myMana) and NPC.IsEntityInRange(myHero, enemy, Menu.GetValue(fooAllInOne.optionHeroCKUltTrigger)) then
 						Ability.CastNoTarget(ult)
-						fooAllInOne.lastTick = os.clock() + 0
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(ult)
 						return
 					end
 				end
@@ -13166,13 +13166,13 @@ function fooAllInOne.NyxCombo(myHero, enemy)
 					local predPos = fooAllInOne.castLinearPrediction(myHero, enemy, pred)
 					local predPosAdjusted = Entity.GetAbsOrigin(myHero) + (predPos - Entity.GetAbsOrigin(myHero)):Normalized():Scaled(200)
 					Ability.CastPosition(Q, predPosAdjusted)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 					return
 				end
 
 				if W and Ability.IsCastable(W, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(W)) then
 					Ability.CastTarget(W, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 					return
 				end
 			end
@@ -13220,13 +13220,13 @@ function fooAllInOne.LionCombo(myHero, enemy)
 						end
 					if not specialCheck then
 						Ability.CastTarget(W, enemy)
-						fooAllInOne.lastTick = os.clock() + 0 + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W) + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)
 						return
 					else
 						local bestPos = fooAllInOne.getBestPosition(Heroes.InRadius(Entity.GetAbsOrigin(enemy), 620, Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY), 310)
 						if bestPos ~= nil and NPC.IsPositionInRange(myHero, bestPos, Ability.GetCastRange(W), 0) then
 							Ability.CastPosition(W, bestPos)
-							fooAllInOne.lastTick = os.clock() + 0 + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)
+							fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W) + NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING)
 							return
 						end
 					end
@@ -13247,12 +13247,12 @@ function fooAllInOne.LionCombo(myHero, enemy)
 						local timingOffset = ((Entity.GetAbsOrigin(myHero) - Entity.GetAbsOrigin(enemy)):Length2D() - 125) / 1600
 						if dieTime - GameRules.GetGameTime() <= 0.35 + timingOffset then
 							Ability.CastPosition(Q, predPosAdjusted)
-							fooAllInOne.lastTick = os.clock() + 0
+							fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 							return
 						end
 					else
 						Ability.CastPosition(Q, predPosAdjusted)
-						fooAllInOne.lastTick = os.clock() + 0
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 						return
 					end
 				end	
@@ -13292,14 +13292,14 @@ function fooAllInOne.WDCombo(myHero, enemy)
 		
 				if Q and Ability.IsCastable(Q, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(Q)) then
 					Ability.CastTarget(Q, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 					return
 				end
 
 				if E and Ability.IsCastable(E, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(E)) then
 					local pred = 0 + (NetChannel.GetAvgLatency(Enum.Flow.FLOW_OUTGOING) * 2)
 					Ability.CastPosition(E, fooAllInOne.castPrediction(myHero, enemy, pred))
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(E)
 					return
 				end
 			end
@@ -13339,13 +13339,13 @@ function fooAllInOne.SSCombo(myHero, enemy)
 
 				if W and Ability.IsCastable(W, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(W)) then
 					Ability.CastTarget(W, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(W)
 					return
 				end
 		
 				if Q and Ability.IsCastable(Q, myMana) and NPC.IsEntityInRange(myHero, enemy, Ability.GetCastRange(Q)) then
 					Ability.CastTarget(Q, enemy)
-					fooAllInOne.lastTick = os.clock() + 0
+					fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(Q)
 					return
 				end
 
@@ -13358,12 +13358,12 @@ function fooAllInOne.SSCombo(myHero, enemy)
 					if dieTime > 0 then
 						if dieTime - GameRules.GetGameTime() <= 0.45 then
 							Ability.CastTarget(E, enemy)
-							fooAllInOne.lastTick = os.clock() + 0
+							fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(E)
 							return
 						end
 					else
 						Ability.CastTarget(E, enemy)
-						fooAllInOne.lastTick = os.clock() + 0
+						fooAllInOne.lastTick = os.clock() + Ability.GetCastPoint(E)
 						return
 					end
 				end
@@ -14680,9 +14680,9 @@ function fooAllInOne.SFCombo(myHero, enemy)
 
 	if not Menu.IsEnabled(fooAllInOne.optionHeroSF) then return end
 
-	local razeShort = NPC.GetAbilityByIndex(myHero, 0)
-    	local razeMid = NPC.GetAbilityByIndex(myHero, 1)
-    	local razeLong = NPC.GetAbilityByIndex(myHero, 2)
+	local razeShort = NPC.GetAbility(myHero, "nevermore_shadowraze1")
+    	local razeMid = NPC.GetAbility(myHero, "nevermore_shadowraze2")
+    	local razeLong = NPC.GetAbility(myHero, "nevermore_shadowraze3")
 	local requiem = NPC.GetAbility(myHero, "nevermore_requiem")
 	local myMana = NPC.GetMana(myHero)
 
@@ -14898,9 +14898,9 @@ function fooAllInOne.WillowCombo(myHero, enemy)
 	if not Menu.IsEnabled(fooAllInOne.optionHeroWillow) then return end
 	if not NPC.IsEntityInRange(myHero, enemy, 3000)	then return end
 
-	local maze = NPC.GetAbilityByIndex(myHero, 0)
-    	local shadowRealm = NPC.GetAbilityByIndex(myHero, 1)
-	local cursedCrown = NPC.GetAbilityByIndex(myHero, 2)
+	local maze = NPC.GetAbility(myHero, "dark_willow_bramble_maze")
+    	local shadowRealm = NPC.GetAbility(myHero, "dark_willow_shadow_realm")
+	local cursedCrown = NPC.GetAbility(myHero, "dark_willow_cursed_crown")
     	local bedlam = NPC.GetAbility(myHero, "dark_willow_bedlam")
 
 	local myMana = NPC.GetMana(myHero)
@@ -15060,9 +15060,9 @@ function fooAllInOne.SilencerCombo(myHero, enemy)
 	if not Menu.IsEnabled(fooAllInOne.optionHeroSilencer) then return end
 	if not NPC.IsEntityInRange(myHero, enemy, 3000)	then return end
 
-	local arcaneCurse = NPC.GetAbilityByIndex(myHero, 0)
-    	local glaives = NPC.GetAbilityByIndex(myHero, 1)
-	local lastWord = NPC.GetAbilityByIndex(myHero, 2)
+	local arcaneCurse = NPC.GetAbility(myHero, "silencer_curse_of_the_silent")
+    	local glaives = NPC.GetAbility(myHero, "silencer_glaives_of_wisdom")
+	local lastWord = NPC.GetAbility(myHero, "silencer_last_word")
     	local globalSilence = NPC.GetAbility(myHero, "silencer_global_silence")
 
 	local myMana = NPC.GetMana(myHero)
@@ -16875,8 +16875,8 @@ function fooAllInOne.LegionCombo(myHero, enemy)
 
 	if not Menu.IsEnabled(fooAllInOne.optionHeroLegion) then return end
 
-	local odds = NPC.GetAbilityByIndex(myHero, 0)
-	local pressTheAttack = NPC.GetAbilityByIndex(myHero, 1)
+	local odds = NPC.GetAbility(myHero, "legion_commander_overwhelming_odds")
+	local pressTheAttack = NPC.GetAbility(myHero, "legion_commander_press_the_attack")
     	local duel = NPC.GetAbility(myHero, "legion_commander_duel")
 
 	local Blademail = NPC.GetItem(myHero, "item_blade_mail", true)
@@ -16995,8 +16995,8 @@ function fooAllInOne.SlardarCombo(myHero, enemy)
 	if not Menu.IsEnabled(fooAllInOne.optionHeroSlardar) then return end
 	if not NPC.IsEntityInRange(myHero, enemy, 3000)	then return end
 
-	local sprint = NPC.GetAbilityByIndex(myHero, 0)
-	local crush = NPC.GetAbilityByIndex(myHero, 1)
+	local sprint = NPC.GetAbility(myHero, "slardar_sprint")
+	local crush = NPC.GetAbility(myHero, "slardar_slithereen_crush")
 	local haze = NPC.GetAbility(myHero, "slardar_amplify_damage")
 
 	local blink = NPC.GetItem(myHero, "item_blink", true)
