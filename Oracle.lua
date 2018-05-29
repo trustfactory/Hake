@@ -1,28 +1,232 @@
+local Utility = require("Utility")
 local Oracle = {}
 
 Oracle.optionEnable = Menu.AddOption({"Hero Specific","Oracle"}, "1. Enabled", "Enable Or Disable Oracle Combo Script")
 Oracle.optionKey = Menu.AddKeyOption({"Hero Specific","Oracle"}, "2. Non-Ult Healing Key", Enum.ButtonCode.KEY_D)
 Oracle.optionKey2 = Menu.AddKeyOption({"Hero Specific","Oracle"}, "3. Ult Healing Key", Enum.ButtonCode.KEY_F)
+Oracle.optionEnableKS = Menu.AddOption({"Hero Specific","Oracle"}, "4. Fortunes KillSteal", "Enable Or Disable KillSteal")
 --Items Toggle Menu--
-Oracle.optionEnableBottle = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"1. Use Bottle on Target During Ult","Turn On/Off Bottle in Ult Combo")
-Oracle.optionEnableGreaves = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"2. Use Greaves on Target During Ult","Turn On/Off Greaves in Ult Combo")
-Oracle.optionEnableMekansm = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"3. Use Mekansm on Target During Ult","Turn On/Off Mekansm in Ult Combo")
-Oracle.optionEnableSalve = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"4. Use Salve on Target During Ult","Turn On/Off Salve in Ult Combo")
-Oracle.optionEnableUrn = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"5. Use Urn on Target During Ult","Turn On/Off Urn in Ult Combo")
-Oracle.optionEnableVessel = Menu.AddOption({"Hero Specific","Oracle","4. Items"},"6. Use Vessel on Target During Ult","Turn On/Off Vessel in Ult Combo")
+Oracle.optionEnableBottle = Menu.AddOption({"Hero Specific","Oracle","5. Items"},"1. Use Bottle on Target During Ult","Turn On/Off Bottle in Ult Combo")
+Oracle.optionEnableGreaves = Menu.AddOption({"Hero Specific","Oracle","5. Items"},"2. Use Greaves on Target During Ult","Turn On/Off Greaves in Ult Combo")
+Oracle.optionEnableMekansm = Menu.AddOption({"Hero Specific","Oracle","5. Items"},"3. Use Mekansm on Target During Ult","Turn On/Off Mekansm in Ult Combo")
+Oracle.optionEnableSalve = Menu.AddOption({"Hero Specific","Oracle","5. Items"},"4. Use Salve on Target During Ult","Turn On/Off Salve in Ult Combo")
+Oracle.optionEnableUrn = Menu.AddOption({"Hero Specific","Oracle","5. Items"},"5. Use Urn on Target During Ult","Turn On/Off Urn in Ult Combo")
+Oracle.optionEnableVessel = Menu.AddOption({"Hero Specific","Oracle","5. Items"},"6. Use Vessel on Target During Ult","Turn On/Off Vessel in Ult Combo")
 
 function Oracle.OnUpdate()
     if not Menu.IsEnabled(Oracle.optionEnable) then return true end
-	if Menu.IsKeyDown(Oracle.optionKey)then
+	if Menu.IsKeyDown(Oracle.optionKey) then
     Oracle.Combo()
 	end
 	
 	if not Menu.IsEnabled(Oracle.optionEnable) then return true end
-	if Menu.IsKeyDown(Oracle.optionKey2)then
+	if Menu.IsKeyDown(Oracle.optionKey2) then
     Oracle.Combo2()
+	end
+	
+	if Menu.IsEnabled(Oracle.optionEnableKS) then
+    Oracle.KillSteal()
 	end
 end	
 
+-- global Variables
+Oracle.lastAttackTime = 0
+Oracle.lastAttackTime2 = 0
+Oracle.LastTarget = nil
+
+function Oracle.ResetGlobalVariables()
+    Oracle.lastAttackTime = 0
+	Oracle.lastAttackTime2 = 0
+	Oracle.LastTarget = nil
+end
+
+function Oracle.isHeroChannelling(myHero)
+
+	if not myHero then return true end
+
+	if NPC.IsChannellingAbility(myHero) then return true end
+	if NPC.HasModifier(myHero, "modifier_teleporting") then return true end
+
+	return false
+end
+
+function Oracle.heroCanCastItems(myHero)
+
+	if not myHero then return false end
+	if not Entity.IsAlive(myHero) then return false end
+
+	if NPC.IsStunned(myHero) then return false end
+	if NPC.HasModifier(myHero, "modifier_bashed") then return false end
+	if NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) then return false end	
+	if NPC.HasModifier(myHero, "modifier_eul_cyclone") then return false end
+	if NPC.HasModifier(myHero, "modifier_obsidian_destroyer_astral_imprisonment_prison") then return false end
+	if NPC.HasModifier(myHero, "modifier_shadow_demon_disruption") then return false end	
+	if NPC.HasModifier(myHero, "modifier_invoker_tornado") then return false end
+	if NPC.HasState(myHero, Enum.ModifierState.MODIFIER_STATE_HEXED) then return false end
+	if NPC.HasModifier(myHero, "modifier_legion_commander_duel") then return false end
+	if NPC.HasModifier(myHero, "modifier_axe_berserkers_call") then return false end
+	if NPC.HasModifier(myHero, "modifier_winter_wyvern_winters_curse") then return false end
+	if NPC.HasModifier(myHero, "modifier_bane_fiends_grip") then return false end
+	if NPC.HasModifier(myHero, "modifier_bane_nightmare") then return false end
+	if NPC.HasModifier(myHero, "modifier_faceless_void_chronosphere_freeze") then return false end
+	if NPC.HasModifier(myHero, "modifier_enigma_black_hole_pull") then return false end
+	if NPC.HasModifier(myHero, "modifier_magnataur_reverse_polarity") then return false end
+	if NPC.HasModifier(myHero, "modifier_pudge_dismember") then return false end
+	if NPC.HasModifier(myHero, "modifier_shadow_shaman_shackles") then return false end
+	if NPC.HasModifier(myHero, "modifier_techies_stasis_trap_stunned") then return false end
+	if NPC.HasModifier(myHero, "modifier_storm_spirit_electric_vortex_pull") then return false end
+	if NPC.HasModifier(myHero, "modifier_tidehunter_ravage") then return false end
+	if NPC.HasModifier(myHero, "modifier_windrunner_shackle_shot") then return false end
+	if NPC.HasModifier(myHero, "modifier_item_nullifier_mute") then return false end
+
+	return true	
+end
+
+function Oracle.IsInAbilityPhase(myHero)
+
+	if not myHero then return false end
+
+	local myAbilities = {}
+
+	for i= 0, 10 do
+		local ability = NPC.GetAbilityByIndex(myHero, i)
+		if ability and Entity.IsAbility(ability) and Ability.GetLevel(ability) > 0 then
+			table.insert(myAbilities, ability)
+		end
+	end
+
+	if #myAbilities < 1 then return false end
+
+	for _, v in ipairs(myAbilities) do
+		if v then
+			if Ability.IsInAbilityPhase(v) then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
+function Oracle.Debugger(time, npc, ability, order)
+
+	if not Menu.IsEnabled(Oracle.optionEnable) then return end
+	Log.Write(tostring(time) .. " " .. tostring(NPC.GetUnitName(npc)) .. " " .. tostring(ability) .. " " .. tostring(order))
+end
+
+function Oracle.GenericMainAttack(myHero, attackType, target, position)
+	
+	if not myHero then return end
+	if not target and not position then return end
+
+	if Oracle.isHeroChannelling(myHero) == true then return end
+	if Oracle.heroCanCastItems(myHero) == false then return end
+	if Oracle.IsInAbilityPhase(myHero) == true then return end
+
+	if Menu.IsEnabled(Oracle.optionEnable) then
+		if target ~= nil then
+			Oracle.GenericAttackIssuer(attackType, target, position, myHero)
+		end
+	else
+		Oracle.GenericAttackIssuer(attackType, target, position, myHero)
+	end
+end
+
+function Oracle.GenericAttackIssuer(attackType, target, position, npc)
+
+	if not npc then return end
+	if not target and not position then return end
+	if os.clock() - Oracle.lastAttackTime2 < 0.5 then return end
+
+	if attackType == "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET" then
+		if target ~= nil then
+			if target ~= Oracle.LastTarget then
+				Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_TARGET, target, Vector(0, 0, 0), ability, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, npc)
+				Oracle.LastTarget = target
+				Oracle.Debugger(GameRules.GetGameTime(), npc, "attack", "DOTA_UNIT_ORDER_ATTACK_TARGET")
+			end
+		end
+	end
+
+	if attackType == "Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_MOVE" then
+		if position ~= nil then
+			if not NPC.IsAttacking(npc) or not NPC.IsRunning(npc) then
+				if position:__tostring() ~= Oracle.LastTarget then
+					Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_ATTACK_MOVE, target, position, ability, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, npc)
+					Oracle.LastTarget = position:__tostring()
+					Oracle.Debugger(GameRules.GetGameTime(), npc, "attackMove", "DOTA_UNIT_ORDER_ATTACK_MOVE")
+				end
+			end
+		end
+	end
+
+	if attackType == "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION" then
+		if position ~= nil then
+			if position:__tostring() ~= Oracle.LastTarget then
+				Player.PrepareUnitOrders(Players.GetLocal(), Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION, target, position, ability, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, npc)
+				Oracle.LastTarget = position:__tostring()
+				Oracle.Debugger(GameRules.GetGameTime(), npc, "move", "DOTA_UNIT_ORDER_MOVE_TO_POSITION")
+			end
+		end
+	end
+
+	if target ~= nil then
+		if target == Oracle.LastTarget then
+			if not NPC.IsAttacking(npc) then
+				Oracle.LastTarget = nil
+				Oracle.lastAttackTime2 = os.clock()
+				return
+			end
+		end
+	end
+
+	if position ~= nil then
+		if position:__tostring() == Oracle.LastTarget then
+			if not NPC.IsRunning(npc) then
+				Oracle.LastTarget = nil
+				Oracle.lastAttackTime2 = os.clock()
+				return
+			end
+		end
+	end
+end
+
+function Oracle.KillSteal()
+    local myHero = Heroes.GetLocal()
+    if not myHero then return end
+    if not Utility.IsSuitableToCastSpell(myHero) then return end
+
+    local Fortunes = NPC.GetAbility(myHero, "oracle_fortunes_end")
+    if not Fortunes or not Ability.IsCastable(Fortunes, NPC.GetMana(myHero)) then return end
+
+    local FortunesDamage = 60 + 30 * Ability.GetLevel(Fortunes)
+
+    --Item Calls--
+    local Lens = NPC.GetItem(myHero, "item_aether_lens", true)
+    
+    --Ability Ranges--
+    local FortunesRange = 850
+    
+    --Talent Tree Bonus Range-- 	
+  	local TalentBonusRange = NPC.GetAbility(myHero, "special_bonus_cast_range_150")
+	
+	if Lens then
+    	FortunesRange = FortunesRange + 250
+    end
+	
+	if TalentBonusRange and Ability.GetLevel(TalentBonusRange) > 0 then
+    	FortunesRange = FortunesRange + 150
+  	end
+  	
+    local Enemies = NPC.GetHeroesInRadius(myHero, FortunesRange, Enum.TeamType.TEAM_ENEMY)
+    if not Enemies or #Enemies <= 0 then return end
+
+    for i, Enemy in ipairs(Enemies) do
+    local True_Damage = FortunesDamage * NPC.GetMagicalArmorDamageMultiplier(Enemy)
+    	if not NPC.IsIllusion(Enemy) and Utility.CanCastSpellOn(Enemy) and Entity.GetHealth(Enemy) <= True_Damage then
+        Ability.CastTarget(Fortunes, Enemy) return end
+	end
+end
 
 function Oracle.Combo()
 if not Menu.IsKeyDown(Oracle.optionKey) then return end
@@ -65,7 +269,7 @@ if not Menu.IsKeyDown(Oracle.optionKey) then return end
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 	and Flames and Ability.IsCastable(Flames, mana) and Ability.IsReady(Flames) and NPC.HasModifier(hero, "modifier_oracle_fates_edict") and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(hero), EdictRange) then Ability.CastTarget(Flames, hero) return end
 	end
-	Player.PrepareUnitOrders(Players.GetLocal(), 4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero) 
+	Oracle.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION", nil, hero)
 end
 
 function Oracle.Combo2()
@@ -157,7 +361,7 @@ if not Menu.IsKeyDown(Oracle.optionKey2) then return end
 	if not NPC.HasState(hero, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 	and Flames and Ability.IsCastable(Flames, mana) and Ability.IsReady(Flames) and NPC.HasModifier(hero, "modifier_oracle_false_promise") then Ability.CastTarget(Flames, hero) return end
 	end
-	Player.PrepareUnitOrders(Players.GetLocal(), 4, hero, Vector(0,0,0), hero, Enum.PlayerOrderIssuer.DOTA_ORDER_ISSUER_PASSED_UNIT_ONLY, myHero)
+	Oracle.GenericMainAttack(myHero, "Enum.UnitOrder.DOTA_UNIT_ORDER_MOVE_TO_POSITION", nil, hero)
 end
 	
 return Oracle
