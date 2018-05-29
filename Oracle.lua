@@ -29,9 +29,8 @@ if not Menu.IsKeyDown(Oracle.optionKey) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_oracle" then return end
     local hero = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_FRIEND)
+    if not hero then return end
     local mana = NPC.GetMana(myHero)
-	
-	if not hero then return end
 	
 	--Ability Calls--
     local Edict = NPC.GetAbility(myHero, "oracle_fates_edict")
@@ -74,9 +73,8 @@ if not Menu.IsKeyDown(Oracle.optionKey2) then return end
     local myHero = Heroes.GetLocal()
     if NPC.GetUnitName(myHero) ~= "npc_dota_hero_oracle" then return end
     local hero = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_FRIEND)
+    if not hero then return end
     local mana = NPC.GetMana(myHero)
-	
-	if not hero then return end
 	
 	--Ability Calls--
     local Promise = NPC.GetAbility(myHero, "oracle_false_promise")
