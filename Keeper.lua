@@ -244,7 +244,6 @@ if not Menu.IsKeyDown(Keeper.optionKey) then return end
     
     --Item Ranges--
     local AtosRange = 1150
-    local DagonRange = Ability.GetCastRange(Dagon)
     local DiffusalRange = 600
   	local ForceRange = 750
   	local NullifierRange = 600
@@ -254,7 +253,6 @@ if not Menu.IsKeyDown(Keeper.optionKey) then return end
   	
   	if Lens then
   		AtosRange = AtosRange + 250
-  		DagonRange = DagonRange + 250
   		DiffusalRange = DiffusalRange + 250
   		ForceRange = ForceRange + 250
     	LeakRange = LeakRange + 250
@@ -263,7 +261,6 @@ if not Menu.IsKeyDown(Keeper.optionKey) then return end
 	
 	if TalentBonusRange and Ability.GetLevel(TalentBonusRange) > 0 then
 		AtosRange = AtosRange + 350
-		DagonRange = DagonRange + 350
 		DiffusalRange = DiffusalRange + 350
 		ForceRange = ForceRange + 350
 		LeakRange = LeakRange + 350
@@ -291,7 +288,7 @@ if not Menu.IsKeyDown(Keeper.optionKey) then return end
 	end
 	
 	if not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE) and Menu.IsEnabled(Keeper.optionEnableDagon) and not NPC.HasModifier(enemy, "modifier_item_blade_mail_reflect") and not NPC.HasModifier(enemy, "modifier_sheepstick_debuff") and not Entity.IsDormant(enemy) then
-		if Dagon and Ability.IsCastable(Dagon, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), DagonRange) then
+		if Dagon and Ability.IsCastable(Dagon, mana) then
 			Ability.CastTarget(Dagon, enemy) return
 		end
 	end
@@ -321,9 +318,10 @@ function Keeper.SelfChakra()
 	
 	--Ability Call--
 	local Chakra = NPC.GetAbility(myHero, "keeper_of_the_light_chakra_magic")
+	local Illuminate = NPC.GetAbility(myHero, "keeper_of_the_light_illuminate")
 	
 	if Menu.IsEnabled(Keeper.optionEnableSelfChakra) and not NPC.IsIllusion(myHero) and Keeper.heroCanCastItems(myHero) then
-		if Chakra and Ability.IsReady(Chakra) and Ability.IsCastable(Chakra, mana) then
+		if Chakra and Ability.IsReady(Chakra) and Ability.IsCastable(Chakra, mana) and not Ability.IsChannelling(Illuminate) then
 			local MyManaPercentage = (NPC.GetMana(myHero) / NPC.GetMaxMana(myHero)) * 100
 			if MyManaPercentage <= Menu.GetValue(Keeper.ManaRestorePoint) then
 		        Ability.CastTarget(Chakra, myHero) return
