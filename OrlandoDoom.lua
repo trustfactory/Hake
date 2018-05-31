@@ -2,8 +2,9 @@ local Utility = require("Utility")
 local OrlandoDoom = {}
 
 OrlandoDoom.optionEnable = Menu.AddOption({"Hero Specific","Doom"},"1. Enabled","Enable Or Disable Doom Combo Script")
-OrlandoDoom.optionAutoDoom = Menu.AddOption({"Hero Specific", "Doom"}, "2. Auto Doom", "Auto cast 'Doom' to interrupt channelled ult")
-OrlandoDoom.optionToggleKey = Menu.AddKeyOption({"Hero Specific", "Doom"}, "3. Auto Doom Toggle Key", Enum.ButtonCode.KEY_S)
+OrlandoDoom.optionAutoDevour = Menu.AddOption({"Hero Specific", "Doom"}, "2.1. Auto Devour", "Auto cast 'Devour' to consume Archer or Siege Lane creep")
+OrlandoDoom.optionAutoDoom = Menu.AddOption({"Hero Specific", "Doom"}, "2.2. Auto Doom", "Auto cast 'Doom' to interrupt channelled ult")
+OrlandoDoom.optionToggleKey = Menu.AddKeyOption({"Hero Specific", "Doom"}, "3. Auto Toggle Key", Enum.ButtonCode.KEY_S)
 OrlandoDoom.optionKey = Menu.AddKeyOption({"Hero Specific","Doom"},"4. Non-Ult Combo Key",Enum.ButtonCode.KEY_D)
 OrlandoDoom.optionKey2 = Menu.AddKeyOption({"Hero Specific","Doom"},"5. Ult Combo Key",Enum.ButtonCode.KEY_F)
 OrlandoDoom.optionBlink = Menu.AddOption({"Hero Specific", "Doom" }, "6. Use Blink to Initiate {{Doom}}", "")
@@ -66,6 +67,10 @@ function OrlandoDoom.OnUpdate()
 
 	if Menu.IsEnabled(OrlandoDoom.optionAutoDoom) and AutoMode then
     	OrlandoDoom.AutoDoom(myHero)
+	end
+	
+	if Menu.IsEnabled(OrlandoDoom.optionAutoDevour) and AutoMode then
+    	OrlandoDoom.AutoDevourRanged(myHero)
 	end
 	
 	if not Engine.IsInGame() then
@@ -325,6 +330,24 @@ function OrlandoDoom.OnDraw()
     local x, y, visible = Renderer.WorldToScreen(pos)
     Renderer.SetDrawColor(0, 255, 0, 255)
     Renderer.DrawTextCentered(font, x, y, "Auto", 1)
+end
+
+function OrlandoDoom.AutoDevourRanged(myHero)
+    	
+	if not myHero then return end
+	local Devour = NPC.GetAbility(myHero, "doom_bringer_devour")
+	if not Devour then return end
+	local mana = NPC.GetMana(myHero)
+	if not Ability.IsReady(Devour) and Ability.IsCastable(Devour, mana) then return end
+
+	for _, creeps in ipairs(Entity.GetUnitsInRadius(myHero, 300, Enum.TeamType.TEAM_ENEMY)) do
+		if creeps and Entity.IsNPC(creeps) and not Entity.IsHero(creeps) and
+		NPC.IsCreep(creeps) and Entity.IsAlive(creeps) and not Entity.IsDormant(creeps) and not NPC.IsWaitingToSpawn(creeps) and not Entity.IsSameTeam(myHero, creeps) then
+			if NPC.GetUnitName(creeps) == "npc_dota_goodguys_siege" or NPC.GetUnitName(creeps) == "npc_dota_goodguys_siege_upgraded" or NPC.GetUnitName(creeps) == "npc_dota_goodguys_siege_upgraded_mega" or NPC.GetUnitName(creeps) == "npc_dota_badguys_siege" or NPC.GetUnitName(creeps) == "npc_dota_badguys_siege_upgraded" or NPC.GetUnitName(creeps) == "npc_dota_badguys_siege_upgraded_mega" or NPC.GetUnitName(creeps) == "npc_dota_creep_badguys_ranged" or NPC.GetUnitName(creeps) == "npc_dota_creep_badguys_ranged_upgraded" or NPC.GetUnitName(creeps) == "npc_dota_creep_badguys_ranged_upgraded_mega" or NPC.GetUnitName(creeps) == "npc_dota_creep_goodguys_ranged" or NPC.GetUnitName(creeps) == "npc_dota_creep_goodguys_ranged_upgraded" or NPC.GetUnitName(creeps) == "npc_dota_creep_goodguys_ranged_upgraded_mega" and NPC.GetUnitName(creeps) ~= nil then
+				Ability.CastTarget(Devour, creeps) return
+			end
+		end
+	end
 end
 
 function OrlandoDoom.AutoDoom(myHero)
